@@ -20,8 +20,11 @@ type projectileNode struct {
 	pos   gmath.Vec
 	toPos gmath.Vec
 
+	dist float64
+
 	charge float32
 
+	slow     bool
 	disposed bool
 }
 
@@ -57,6 +60,8 @@ func (p *projectileNode) Init(scene *ge.Scene) {
 	p.world.stage.AddGraphics(p.sprite)
 
 	p.rotation = p.pos.AngleToPoint(p.toPos)
+
+	p.dist = p.pos.DistanceTo(p.toPos)
 }
 
 func (p *projectileNode) IsDisposed() bool {
@@ -75,16 +80,30 @@ func (p *projectileNode) Detonate() {
 		layer: aboveEffectLayer,
 		image: p.weapon.ProjectileExplosion,
 	})
-	effect.colorScale = calculateColorScale(p.charge)
+	effect.colorScale = p.sprite.GetColorScale()
 	p.scene.AddObject(effect)
 
 	p.Dispose()
 }
 
-func (p *projectileNode) Update(delta float64) {
-	travelled := (p.weapon.ProjectileSpeed + p.extraSpeed) * delta
+func (p *projectileNode) movementSpeed() float64 {
+	speed := p.weapon.ProjectileSpeed + p.extraSpeed
+	if p.slow {
+		speed *= 0.6
+	}
+	return speed
+}
 
-	if p.pos.DistanceTo(p.toPos) <= travelled {
+func (p *projectileNode) Update(delta float64) {
+	travelled := p.movementSpeed() * delta
+	p.dist -= travelled
+
+	if !p.slow && p.dist < 128 {
+		p.slow = true
+		p.sprite.SetColorScale(multiplyColorScale(p.sprite.GetColorScale(), 2.0))
+	}
+
+	if p.dist <= 0 {
 		p.Detonate()
 		return
 	}

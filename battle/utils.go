@@ -5,6 +5,13 @@ import (
 	"github.com/quasilyte/gmath"
 )
 
+func multiplyColorScale(cs ge.ColorScale, v float32) ge.ColorScale {
+	cs.R *= v
+	cs.G *= v
+	cs.B *= v
+	return cs
+}
+
 func calculateColorScale(charge float32) ge.ColorScale {
 	if charge == 1 {
 		return ge.ColorScale{1, 1, 1, 1}
