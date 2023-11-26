@@ -1,9 +1,10 @@
 package battle
 
 import (
+	"math"
+
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/gmath"
-	"github.com/quasilyte/shmup-game/assets"
 	"github.com/quasilyte/shmup-game/session"
 	"github.com/quasilyte/shmup-game/viewport"
 	"github.com/quasilyte/xm"
@@ -39,12 +40,13 @@ func (r *Runner) Init(scene *ge.Scene) {
 	scene.AddGraphics(cam)
 
 	vessel := newVesselNode(r.state)
-	vessel.pos = gmath.Vec{X: 1000, Y: 1000}
+	vessel.pos = gmath.Vec{X: 1024 / 2, Y: (1024 * 4) - 128}
+	vessel.rotation = 3 * math.Pi / 2
 	scene.AddObject(vessel)
 
-	overlay := scene.NewSprite(assets.ImageBattleOverlay)
-	overlay.Centered = false
-	cam.UI.AddGraphics(overlay)
+	// overlay := scene.NewSprite(assets.ImageBattleOverlay)
+	// overlay.Centered = false
+	// cam.UI.AddGraphics(overlay)
 
 	human := &humanPlayer{
 		world:  r.state,

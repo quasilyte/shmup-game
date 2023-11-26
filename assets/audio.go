@@ -36,6 +36,8 @@ func VolumeMultiplier(level int) float64 {
 func registerAudioResources(ctx *ge.Context, config Config) {
 	audioResources := map[resource.AudioID]resource.AudioInfo{
 		AudioMusic1: {Path: "music/drozerix_-_leisurely_voice.xm", Group: SoundGroupMusic},
+
+		AudioLaser1Impact: {Path: "sfx/laser1_impact.wav"},
 	}
 
 	xmParser := xmfile.NewParser(xmfile.ParserConfig{})
@@ -76,6 +78,8 @@ func NumSamples(a resource.AudioID) int {
 
 const (
 	AudioNone resource.AudioID = iota
+
+	AudioLaser1Impact
 
 	AudioMusic1
 )

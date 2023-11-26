@@ -13,6 +13,10 @@ func registerImageResources(ctx *ge.Context) {
 
 		ImageLaserProjectile1: {Path: "image/projectile/laser1.png"},
 
+		ImageLaserExplosion1: {Path: "image/effect/laser1_impact.png", FrameWidth: 11},
+
+		ImageDashEffect: {Path: "image/effect/dash.png", FrameWidth: 30},
+
 		ImageTileset1: {Path: "image/landscape/tiles1.png"},
 
 		ImageBattleOverlay: {Path: "image/ui/battle_hud.png"},
@@ -30,6 +34,10 @@ const (
 	ImageInterceptor1
 
 	ImageLaserProjectile1
+
+	ImageLaserExplosion1
+
+	ImageDashEffect
 
 	ImageTileset1
 

@@ -6,13 +6,15 @@ import (
 )
 
 type WeaponDesign struct {
-	AttackRange     float64
-	ProjectileSpeed float64
-	ProjectileImage resource.ImageID
+	AttackRange         float64
+	ProjectileSpeed     float64
+	ProjectileImage     resource.ImageID
+	ProjectileExplosion resource.ImageID
 }
 
 var TestWeapon = &WeaponDesign{
-	AttackRange:     320,
-	ProjectileSpeed: 600,
-	ProjectileImage: assets.ImageLaserProjectile1,
+	AttackRange:         320,
+	ProjectileSpeed:     600,
+	ProjectileImage:     assets.ImageLaserProjectile1,
+	ProjectileExplosion: assets.ImageLaserExplosion1,
 }

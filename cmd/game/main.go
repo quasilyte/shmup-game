@@ -33,11 +33,10 @@ func main() {
 	})
 
 	keymap := input.Keymap{
-		controls.ActionMoveAccelerate: {input.KeyUp, input.KeyW, input.KeyGamepadUp},
-		controls.ActionMoveDecelerate: {input.KeyDown, input.KeyS, input.KeyGamepadDown},
-		controls.ActionRotateLeft:     {input.KeyLeft, input.KeyA, input.KeyGamepadLeft},
-		controls.ActionRotateRight:    {input.KeyRight, input.KeyD, input.KeyGamepadRight},
-		controls.ActionStrafe:         {input.KeySpace, input.KeyShift},
+		controls.ActionMoveTurbo:   {input.KeyUp, input.KeyW, input.KeyGamepadUp},
+		controls.ActionRotateLeft:  {input.KeyLeft, input.KeyA, input.KeyGamepadLeft},
+		controls.ActionRotateRight: {input.KeyRight, input.KeyD, input.KeyGamepadRight},
+		controls.ActionStrafe:      {input.KeySpace, input.KeyShift},
 	}
 	state.Input = ctx.Input.NewHandler(0, keymap)
 

@@ -1,8 +1,6 @@
 package battle
 
 import (
-	"math"
-
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/ge/input"
 	"github.com/quasilyte/gmath"
@@ -28,18 +26,22 @@ func (p *humanPlayer) IsDisposed() bool {
 func (p *humanPlayer) Update(delta float64) {
 	p.vessel.orders.rotateLeft = p.input.ActionIsPressed(controls.ActionRotateLeft)
 	p.vessel.orders.rotateRight = p.input.ActionIsPressed(controls.ActionRotateRight)
-	p.vessel.orders.accelerate = p.input.ActionIsJustPressed(controls.ActionMoveAccelerate)
-	p.vessel.orders.decelerate = p.input.ActionIsJustPressed(controls.ActionMoveDecelerate)
+	p.vessel.orders.turbo = p.input.ActionIsPressed(controls.ActionMoveTurbo)
 	p.vessel.orders.strafe = p.input.ActionIsPressed(controls.ActionStrafe)
 
 	p.updateCamera()
 }
 
 func (p *humanPlayer) updateCamera() {
-	p.camera.Rotation = -math.Pi/2 - p.vessel.rotation.Normalized()
+	// p.camera.Rotation = -math.Pi/2 - p.vessel.rotation.Normalized()
 
-	p.camera.SetOffset(p.vessel.pos.MoveInDirection(180, p.vessel.rotation).Sub(gmath.Vec{
+	p.camera.SetOffset(p.vessel.pos.Sub(gmath.Vec{Y: 128}).Sub(gmath.Vec{
 		X: p.camera.Rect.Width() * 0.5,
 		Y: p.camera.Rect.Height() * 0.5,
 	}))
+
+	// p.camera.SetOffset(p.vessel.pos.MoveInDirection(180, p.vessel.rotation).Sub(gmath.Vec{
+	// 	X: p.camera.Rect.Width() * 0.5,
+	// 	Y: p.camera.Rect.Height() * 0.5,
+	// }))
 }

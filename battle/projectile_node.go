@@ -9,6 +9,8 @@ import (
 type projectileNode struct {
 	sprite *ge.Sprite
 
+	scene *ge.Scene
+
 	extraSpeed float64
 	weapon     *gamedata.WeaponDesign
 	world      *battleState
@@ -46,17 +48,12 @@ func newProjectileNode(config projectileConfig) *projectileNode {
 }
 
 func (p *projectileNode) Init(scene *ge.Scene) {
+	p.scene = scene
+
 	p.sprite = scene.NewSprite(p.weapon.ProjectileImage)
 	p.sprite.Pos.Base = &p.pos
 	p.sprite.Rotation = &p.rotation
-	if p.charge != 1 {
-		var cs ge.ColorScale
-		cs.A = float32(gmath.ClampMax(float64(p.charge)*1.5, 1))
-		cs.G = 1 + p.charge*0.5
-		cs.R = 1 - p.charge*0.5
-		cs.B = 3 * (1 - p.charge)
-		p.sprite.SetColorScale(cs)
-	}
+	p.sprite.SetColorScale(calculateColorScale(p.charge))
 	p.world.stage.AddGraphics(p.sprite)
 
 	p.rotation = p.pos.AngleToPoint(p.toPos)
@@ -71,11 +68,24 @@ func (p *projectileNode) Dispose() {
 	p.sprite.Dispose()
 }
 
+func (p *projectileNode) Detonate() {
+	effect := newEffectNode(effectConfig{
+		world: p.world,
+		pos:   p.toPos,
+		layer: aboveEffectLayer,
+		image: p.weapon.ProjectileExplosion,
+	})
+	effect.colorScale = calculateColorScale(p.charge)
+	p.scene.AddObject(effect)
+
+	p.Dispose()
+}
+
 func (p *projectileNode) Update(delta float64) {
 	travelled := (p.weapon.ProjectileSpeed + p.extraSpeed) * delta
 
 	if p.pos.DistanceTo(p.toPos) <= travelled {
-		p.Dispose()
+		p.Detonate()
 		return
 	}
 

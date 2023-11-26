@@ -16,9 +16,12 @@ type vesselNode struct {
 	world *battleState
 	scene *ge.Scene
 
-	sprite *ge.Sprite
+	strafing  bool
+	thrusting bool
 
-	speedLevel int
+	velocity gmath.Vec
+
+	sprite *ge.Sprite
 
 	orders vesselOrders
 
@@ -26,8 +29,7 @@ type vesselNode struct {
 }
 
 type vesselOrders struct {
-	accelerate  bool
-	decelerate  bool
+	turbo       bool
 	strafe      bool
 	rotateLeft  bool
 	rotateRight bool
@@ -55,22 +57,30 @@ func (v *vesselNode) IsDisposed() bool {
 }
 
 func (v *vesselNode) strafeSpeed() float64 {
-	return 50 * float64(v.speedLevel+1)
+	return 300
 }
 
-func (v *vesselNode) movementSpeed() float64 {
-	return 100 * float64(v.speedLevel)
+func (v *vesselNode) acceleration() float64 {
+	return 400
+}
+
+func (v *vesselNode) maxSpeed() float64 {
+	return 400
 }
 
 func (v *vesselNode) rotationSpeed() gmath.Rad {
-	return 2.5 + gmath.Rad(float64(v.speedLevel)*0.25)
+	return 3.5
 }
 
 func (v *vesselNode) Update(delta float64) {
 	orders := v.orders
 	v.orders = vesselOrders{}
 
-	strafing := false
+	wasStrafing := v.strafing
+	v.strafing = false
+
+	wasThrusting := v.thrusting
+	v.thrusting = false
 
 	switch {
 	case orders.rotateLeft == orders.rotateRight:
@@ -78,36 +88,63 @@ func (v *vesselNode) Update(delta float64) {
 		v.sprite.FrameOffset.X = 0
 	case orders.rotateLeft:
 		if orders.strafe {
-			strafing = true
-			v.pos = v.pos.MoveInDirection(v.strafeSpeed()*delta, v.rotation-math.Pi/2)
+			v.strafing = true
+			if !wasStrafing {
+				v.velocity = v.velocity.Add(gmath.RadToVec(v.rotation - math.Pi/2).Mulf(50 * v.strafeSpeed() * delta)).ClampLen(0.6 * v.strafeSpeed())
+				v.scene.AddObject(newEffectNode(effectConfig{
+					world:    v.world,
+					pos:      v.pos.MoveInDirection(20, v.rotation+math.Pi-0.5),
+					layer:    slightlyAboveEffectLayer,
+					speed:    fastEffectSpeed,
+					image:    assets.ImageDashEffect,
+					rotation: v.rotation + math.Pi/4 + math.Pi,
+				}))
+			}
+			v.velocity = v.velocity.Add(gmath.RadToVec(v.rotation - math.Pi/2).Mulf(0.8 * v.strafeSpeed() * delta)).ClampLen(v.strafeSpeed())
 		} else {
 			v.rotation -= v.rotationSpeed() * gmath.Rad(delta)
 		}
 		v.sprite.FrameOffset.X = 2 * v.sprite.FrameWidth
 	case orders.rotateRight:
 		if orders.strafe {
-			strafing = true
-			v.pos = v.pos.MoveInDirection(v.strafeSpeed()*delta, v.rotation+math.Pi/2)
+			v.strafing = true
+			if !wasStrafing {
+				v.velocity = v.velocity.Add(gmath.RadToVec(v.rotation + math.Pi/2).Mulf(50 * v.strafeSpeed() * delta)).ClampLen(0.6 * v.strafeSpeed())
+				v.scene.AddObject(newEffectNode(effectConfig{
+					world:    v.world,
+					pos:      v.pos.MoveInDirection(20, v.rotation-math.Pi+0.5),
+					layer:    slightlyAboveEffectLayer,
+					speed:    fastEffectSpeed,
+					image:    assets.ImageDashEffect,
+					rotation: v.rotation - math.Pi/4,
+				}))
+			}
+			v.velocity = v.velocity.Add(gmath.RadToVec(v.rotation + math.Pi/2).Mulf(0.8 * v.strafeSpeed() * delta)).ClampLen(v.strafeSpeed())
 		} else {
 			v.rotation += v.rotationSpeed() * gmath.Rad(delta)
 		}
 		v.sprite.FrameOffset.X = 1 * v.sprite.FrameWidth
 	}
 
-	speed := v.movementSpeed()
-	if strafing {
-		speed *= 0.2
-	}
-	v.pos = v.pos.MoveInDirection(speed*delta, v.rotation)
+	accel := v.acceleration()
 
-	switch {
-	case orders.accelerate == orders.decelerate:
-		// Do nothing.
-	case orders.accelerate:
-		v.speedLevel = gmath.ClampMax(v.speedLevel+1, 5)
-	case orders.decelerate:
-		v.speedLevel = gmath.ClampMin(v.speedLevel-1, 0)
+	if orders.turbo {
+		v.thrusting = true
+		if !wasThrusting {
+			v.velocity = v.velocity.Add(gmath.RadToVec(v.rotation).Mulf(25 * accel * delta)).ClampLen(0.5 * v.maxSpeed())
+			v.scene.AddObject(newEffectNode(effectConfig{
+				world:    v.world,
+				pos:      v.pos.MoveInDirection(20, v.rotation-math.Pi),
+				layer:    slightlyAboveEffectLayer,
+				speed:    veryFastEffectSpeed,
+				image:    assets.ImageDashEffect,
+				rotation: v.rotation - math.Pi/2,
+			}))
+		}
+		v.velocity = v.velocity.Add(gmath.RadToVec(v.rotation).Mulf(accel * delta)).ClampLen(v.maxSpeed())
 	}
+
+	v.pos = v.pos.Add(v.velocity.Mulf(delta))
 
 	if orders.fire {
 		v.maybeFire(orders.fireCharge)
@@ -119,32 +156,32 @@ func (v *vesselNode) Update(delta float64) {
 
 func (v *vesselNode) maybeAltFire(charge float32) {
 	v.scene.AddObject(newProjectileNode(projectileConfig{
-		extraSpeed: v.movementSpeed(),
-		world:      v.world,
-		weapon:     gamedata.TestWeapon,
-		pos:        v.pos.MoveInDirection(30, v.rotation+0.15),
-		targetPos:  v.pos.MoveInDirection(300, v.rotation+0.15),
-		charge:     charge,
+		// extraSpeed: v.movementSpeed(),
+		world:     v.world,
+		weapon:    gamedata.TestWeapon,
+		pos:       v.pos.MoveInDirection(30, v.rotation+0.15),
+		targetPos: v.pos.MoveInDirection(300, v.rotation+0.15),
+		charge:    charge,
 	}))
 
 	v.scene.AddObject(newProjectileNode(projectileConfig{
-		extraSpeed: v.movementSpeed(),
-		world:      v.world,
-		weapon:     gamedata.TestWeapon,
-		pos:        v.pos.MoveInDirection(30, v.rotation-0.15),
-		targetPos:  v.pos.MoveInDirection(300, v.rotation-0.15),
-		charge:     charge,
+		// extraSpeed: v.movementSpeed(),
+		world:     v.world,
+		weapon:    gamedata.TestWeapon,
+		pos:       v.pos.MoveInDirection(30, v.rotation-0.15),
+		targetPos: v.pos.MoveInDirection(300, v.rotation-0.15),
+		charge:    charge,
 	}))
 }
 
 func (v *vesselNode) maybeFire(charge float32) {
 	projectile := newProjectileNode(projectileConfig{
-		extraSpeed: v.movementSpeed(),
-		world:      v.world,
-		weapon:     gamedata.TestWeapon,
-		pos:        v.pos.MoveInDirection(30, v.rotation),
-		targetPos:  v.pos.MoveInDirection(300, v.rotation),
-		charge:     charge,
+		// extraSpeed: v.movementSpeed(),
+		world:     v.world,
+		weapon:    gamedata.TestWeapon,
+		pos:       v.pos.MoveInDirection(30, v.rotation),
+		targetPos: v.pos.MoveInDirection(300, v.rotation),
+		charge:    charge,
 	})
 	v.scene.AddObject(projectile)
 }

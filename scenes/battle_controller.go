@@ -24,12 +24,12 @@ func NewBattleController(state *session.State) *BattleController {
 func (c *BattleController) Init(scene *ge.Scene) {
 	c.state.EventPlayerUpdate.Reset()
 
-	scene.Audio().PlayMusic(assets.AudioMusic1)
+	// scene.Audio().PlayMusic(assets.AudioMusic1)
 
 	c.scene = scene
 
 	worldRect := gmath.Rect{
-		Max: gmath.Vec{X: 3200, Y: 3200},
+		Max: gmath.Vec{X: 1024, Y: 1024 * 4},
 	}
 
 	bg := ge.NewTiledBackground(scene.Context())

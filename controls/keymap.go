@@ -7,8 +7,7 @@ import (
 const (
 	ActionUnknown input.Action = iota
 
-	ActionMoveAccelerate
-	ActionMoveDecelerate
+	ActionMoveTurbo
 	ActionRotateLeft
 	ActionRotateRight
 	ActionStrafe
