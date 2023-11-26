@@ -11,5 +11,5 @@ const (
 	ActionMoveDecelerate
 	ActionRotateLeft
 	ActionRotateRight
-	ActionDodge
+	ActionStrafe
 )
