@@ -7,6 +7,7 @@ const (
 	ChannelPlayerAttack
 	ChannelEnemyAttack
 	ChannelEnemyAltAttack
+	ChannelEnemySpecialAttack
 )
 
 type MusicChannelInfo struct {
@@ -24,10 +25,11 @@ var Music1 = &MusicInfo{
 		1: {ChannelPlayerAttack, 70},
 		2: {ChannelPlayerAttack, 70},
 
-		11: {ChannelEnemyAltAttack, 70},
+		9: {ChannelEnemySpecialAttack, 70},
 
-		12: {ChannelEnemyAttack, 70},
-		13: {ChannelEnemyAttack, 70},
-		14: {ChannelEnemyAttack, 70},
+		4: {ChannelEnemyAltAttack, 70},
+
+		10: {ChannelEnemyAttack, 70},
+		11: {ChannelEnemyAttack, 70},
 	},
 }

@@ -20,7 +20,8 @@ type projectileNode struct {
 	pos   gmath.Vec
 	toPos gmath.Vec
 
-	dist float64
+	dist     float64
+	velocity gmath.Vec
 
 	charge float32
 	target *vesselNode
@@ -58,12 +59,17 @@ func (p *projectileNode) Init(scene *ge.Scene) {
 	p.sprite = scene.NewSprite(p.weapon.ProjectileImage)
 	p.sprite.Pos.Base = &p.pos
 	p.sprite.Rotation = &p.rotation
-	p.sprite.SetColorScale(multiplyColorScale(calculateColorScale(p.charge), 0.7))
+	if !p.weapon.IgnoreChargeColor {
+		p.sprite.SetColorScale(multiplyColorScale(calculateColorScale(p.charge), 0.7))
+	}
 	p.world.stage.AddGraphics(p.sprite)
 
 	p.rotation = p.pos.AngleToPoint(p.toPos)
 
 	p.dist = p.pos.DistanceTo(p.toPos)
+	if p.weapon.ProjectileHoming != 0 {
+		p.velocity = gmath.RadToVec(p.rotation).Mulf(p.weapon.ProjectileSpeed)
+	}
 }
 
 func (p *projectileNode) IsDisposed() bool {
@@ -78,7 +84,7 @@ func (p *projectileNode) Dispose() {
 func (p *projectileNode) Detonate() {
 	effect := newEffectNode(effectConfig{
 		world: p.world,
-		pos:   p.toPos,
+		pos:   p.pos,
 		layer: aboveEffectLayer,
 		image: p.weapon.ProjectileExplosion,
 	})
@@ -102,6 +108,11 @@ func (p *projectileNode) movementSpeed() float64 {
 	return speed
 }
 
+func (p *projectileNode) seek() gmath.Vec {
+	dst := p.target.pos.Sub(p.pos).Normalized().Mulf(p.weapon.ProjectileSpeed)
+	return dst.Sub(p.velocity).Normalized().Mulf(p.weapon.ProjectileHoming)
+}
+
 func (p *projectileNode) Update(delta float64) {
 	travelled := p.movementSpeed() * delta
 	p.dist -= travelled
@@ -112,7 +123,9 @@ func (p *projectileNode) Update(delta float64) {
 
 	if !p.slow && p.dist < 100 {
 		p.slow = true
-		p.sprite.SetColorScale(calculateColorScale(p.charge))
+		if !p.weapon.IgnoreChargeColor {
+			p.sprite.SetColorScale(calculateColorScale(p.charge))
+		}
 	}
 
 	if p.dist <= 0 {
@@ -120,5 +133,12 @@ func (p *projectileNode) Update(delta float64) {
 		return
 	}
 
-	p.pos = p.pos.MoveTowards(p.toPos, travelled)
+	if p.weapon.ProjectileHoming == 0 {
+		p.pos = p.pos.MoveTowards(p.toPos, travelled)
+	} else {
+		accel := p.seek()
+		p.velocity = p.velocity.Add(accel.Mulf(delta)).ClampLen(p.weapon.ProjectileSpeed)
+		p.rotation = p.velocity.Angle()
+		p.pos = p.pos.Add(p.velocity.Mulf(delta))
+	}
 }

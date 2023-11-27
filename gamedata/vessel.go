@@ -37,8 +37,8 @@ var BossVessel1 = &VesselDesign{
 	HP:   500,
 	Size: 28,
 
-	Acceleration:  120,
-	Speed:         200,
-	StrafeSpeed:   200,
-	RotationSpeed: 3,
+	Acceleration:  100,
+	Speed:         150,
+	StrafeSpeed:   150,
+	RotationSpeed: 2.5,
 }

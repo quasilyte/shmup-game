@@ -69,11 +69,12 @@ func (r *Runner) Init(scene *ge.Scene) {
 
 	{
 		vessel := newVesselNode(vesselConfig{
-			world:  r.state,
-			design: gamedata.BossVessel1,
-			weapon: gamedata.SpinCannonWeapon,
+			world:         r.state,
+			design:        gamedata.BossVessel1,
+			weapon:        gamedata.SpinCannonWeapon,
+			specialWeapon: gamedata.HomingMissileSpecialWeapon,
 		})
-		vessel.pos = gmath.Vec{X: 1024 / 2, Y: (1024 * 4) - 1000}
+		vessel.pos = gmath.Vec{X: 1024/2 - 100, Y: (1024 * 4) - 800}
 		vessel.rotation = math.Pi / 2
 		scene.AddObject(vessel)
 
@@ -133,6 +134,10 @@ func (r *Runner) Update(delta float64) {
 			v := r.state.bot.GetVessel()
 			v.orders.altFire = true
 			v.orders.altFireCharge = vol
+		case gamedata.ChannelEnemySpecialAttack:
+			v := r.state.bot.GetVessel()
+			v.orders.specialFire = true
+			v.orders.specialFireCharge = vol
 		}
 	}
 

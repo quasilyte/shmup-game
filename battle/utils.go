@@ -16,28 +16,28 @@ func multiplyColorScale(cs ge.ColorScale, v float32) ge.ColorScale {
 
 func calculateColorScale(charge float32) ge.ColorScale {
 	var cs ge.ColorScale
-	cs.A = float32(gmath.ClampMax(float64(charge)*1.5, 1))
+	cs.A = 1
 	switch {
 	case charge >= 0.95:
 		// Red is the main color.
-		cs.R = 1.4 * charge
-		cs.G = charge * 0.6
-		cs.B = charge * 0.6
+		cs.R = 0.05 + (1.4 * charge)
+		cs.G = 0.05 + (charge * 0.7)
+		cs.B = 0.05 + (charge * 0.7)
 	case charge >= 0.7:
 		// Blue is the main color.
-		cs.R = charge * 0.6
-		cs.G = charge * 0.6
-		cs.B = 1.4 * charge
+		cs.R = 0.3 + (charge * 0.7)
+		cs.G = 0.3 + (charge * 0.7)
+		cs.B = 0.3 + (1.4 * charge)
 	case charge >= 0.2:
 		// Green is the main color.
-		cs.R = charge * 0.6
-		cs.G = 1.4 * charge
-		cs.B = charge * 0.6
+		cs.R = 0.8 + (charge * 0.7)
+		cs.G = 0.8 + (1.4 * charge)
+		cs.B = 0.8 + (charge * 0.7)
 	default:
-		// It's dark gray.
-		cs.R = charge * 0.3
-		cs.G = charge * 0.3
-		cs.B = charge * 0.3
+		// It's gray.
+		cs.R = 0.8 + charge
+		cs.G = 0.8 + charge
+		cs.B = 0.8 + charge
 	}
 	return cs
 }

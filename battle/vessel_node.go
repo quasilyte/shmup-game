@@ -42,16 +42,19 @@ type vesselOrders struct {
 	rotateLeft  bool
 	rotateRight bool
 
-	fire          bool
-	altFire       bool
-	fireCharge    float32
-	altFireCharge float32
+	specialFire       bool
+	fire              bool
+	altFire           bool
+	specialFireCharge float32
+	fireCharge        float32
+	altFireCharge     float32
 }
 
 type vesselConfig struct {
-	world  *battleState
-	design *gamedata.VesselDesign
-	weapon *gamedata.WeaponDesign
+	world         *battleState
+	design        *gamedata.VesselDesign
+	weapon        *gamedata.WeaponDesign
+	specialWeapon *gamedata.SpecialWeaponDesign
 }
 
 func newVesselNode(config vesselConfig) *vesselNode {
@@ -59,7 +62,7 @@ func newVesselNode(config vesselConfig) *vesselNode {
 		world:  config.world,
 		design: config.design,
 	}
-	v.weapon = newWeaponSystem(config.world, v, config.weapon)
+	v.weapon = newWeaponSystem(config.world, v, config.weapon, config.specialWeapon)
 	return v
 }
 
@@ -179,6 +182,13 @@ func (v *vesselNode) Update(delta float64) {
 	if orders.altFire {
 		v.maybeAltFire(orders.altFireCharge)
 	}
+	if orders.specialFire {
+		v.maybeSpecialFire(orders.specialFireCharge)
+	}
+}
+
+func (v *vesselNode) maybeSpecialFire(charge float32) {
+	v.weapon.Special(charge)
 }
 
 func (v *vesselNode) maybeAltFire(charge float32) {
