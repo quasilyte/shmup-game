@@ -15,11 +15,13 @@ type Runner struct {
 	session    *session.State
 	state      *battleState
 	eventQueue *queue[xm.StreamEvent]
+	music      *gamedata.MusicInfo
 	t          float64
 }
 
 type RunnerConfig struct {
 	WorldRect gmath.Rect
+	Music     *gamedata.MusicInfo
 	Session   *session.State
 	Stage     *viewport.Stage
 }
@@ -32,6 +34,7 @@ func NewRunner(config RunnerConfig) *Runner {
 			rect:  config.WorldRect,
 		},
 		eventQueue: newQueue[xm.StreamEvent](320),
+		music:      config.Music,
 	}
 }
 
@@ -91,9 +94,7 @@ func (r *Runner) Init(scene *ge.Scene) {
 			if note == 97 || vol == 0 {
 				return
 			}
-			if e.Channel <= 2 {
-				r.eventQueue.Push(e)
-			}
+			r.eventQueue.Push(e)
 		}
 	})
 }
@@ -110,12 +111,19 @@ func (r *Runner) Update(delta float64) {
 			continue
 		}
 		note, vol := current.NoteEventData()
-		if note < 70 {
-			r.state.human.vessel.orders.fire = true
-			r.state.human.vessel.orders.fireCharge = vol
-		} else {
-			r.state.human.vessel.orders.altFire = true
-			r.state.human.vessel.orders.altFireCharge = vol
+		if current.Channel >= len(r.music.Channels) {
+			continue
+		}
+		channelInfo := r.music.Channels[current.Channel]
+		switch channelInfo.Kind {
+		case gamedata.ChannelPlayerAttack:
+			if note < channelInfo.HighNote {
+				r.state.human.vessel.orders.fire = true
+				r.state.human.vessel.orders.fireCharge = vol
+			} else {
+				r.state.human.vessel.orders.altFire = true
+				r.state.human.vessel.orders.altFireCharge = vol
+			}
 		}
 	}
 

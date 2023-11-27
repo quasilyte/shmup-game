@@ -5,6 +5,7 @@ import (
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/shmup-game/assets"
 	"github.com/quasilyte/shmup-game/battle"
+	"github.com/quasilyte/shmup-game/gamedata"
 	"github.com/quasilyte/shmup-game/session"
 	"github.com/quasilyte/shmup-game/viewport"
 )
@@ -39,6 +40,7 @@ func (c *BattleController) Init(scene *ge.Scene) {
 	c.runner = battle.NewRunner(battle.RunnerConfig{
 		Session:   c.state,
 		Stage:     stage,
+		Music:     gamedata.Music1,
 		WorldRect: worldRect,
 	})
 	c.runner.Init(scene)
