@@ -20,6 +20,7 @@ type vesselNode struct {
 	scene *ge.Scene
 
 	design *gamedata.VesselDesign
+	weapon *gamedata.WeaponDesign
 
 	strafing  bool
 	thrusting bool
@@ -50,12 +51,14 @@ type vesselOrders struct {
 type vesselConfig struct {
 	world  *battleState
 	design *gamedata.VesselDesign
+	weapon *gamedata.WeaponDesign
 }
 
 func newVesselNode(config vesselConfig) *vesselNode {
 	return &vesselNode{
 		world:  config.world,
 		design: config.design,
+		weapon: config.weapon,
 	}
 }
 
@@ -178,33 +181,54 @@ func (v *vesselNode) Update(delta float64) {
 }
 
 func (v *vesselNode) maybeAltFire(charge float32) {
-	v.scene.AddObject(newProjectileNode(projectileConfig{
-		target:    v.enemy,
-		world:     v.world,
-		weapon:    gamedata.TestWeapon,
-		pos:       v.pos.MoveInDirection(30, v.rotation+0.15),
-		targetPos: v.pos.MoveInDirection(300, v.rotation+0.15),
-		charge:    charge,
-	}))
-
-	v.scene.AddObject(newProjectileNode(projectileConfig{
-		target:    v.enemy,
-		world:     v.world,
-		weapon:    gamedata.TestWeapon,
-		pos:       v.pos.MoveInDirection(30, v.rotation-0.15),
-		targetPos: v.pos.MoveInDirection(300, v.rotation-0.15),
-		charge:    charge,
-	}))
+	switch v.weapon {
+	case gamedata.IonCannonWeapon:
+		v.scene.AddObject(newProjectileNode(projectileConfig{
+			target:    v.enemy,
+			world:     v.world,
+			weapon:    gamedata.IonCannonWeapon,
+			pos:       v.pos.MoveInDirection(30, v.rotation+0.15),
+			targetPos: v.pos.MoveInDirection(300, v.rotation+0.15),
+			charge:    charge,
+		}))
+		v.scene.AddObject(newProjectileNode(projectileConfig{
+			target:    v.enemy,
+			world:     v.world,
+			weapon:    gamedata.IonCannonWeapon,
+			pos:       v.pos.MoveInDirection(30, v.rotation-0.15),
+			targetPos: v.pos.MoveInDirection(300, v.rotation-0.15),
+			charge:    charge,
+		}))
+	}
 }
 
 func (v *vesselNode) maybeFire(charge float32) {
-	projectile := newProjectileNode(projectileConfig{
-		target:    v.enemy,
-		world:     v.world,
-		weapon:    gamedata.TestWeapon,
-		pos:       v.pos.MoveInDirection(30, v.rotation),
-		targetPos: v.pos.MoveInDirection(300, v.rotation),
-		charge:    charge,
-	})
-	v.scene.AddObject(projectile)
+	switch v.weapon {
+	case gamedata.IonCannonWeapon:
+		v.scene.AddObject(newProjectileNode(projectileConfig{
+			target:    v.enemy,
+			world:     v.world,
+			weapon:    gamedata.IonCannonWeapon,
+			pos:       v.pos.MoveInDirection(30, v.rotation),
+			targetPos: v.pos.MoveInDirection(300, v.rotation),
+			charge:    charge,
+		}))
+		v.scene.AddObject(newProjectileNode(projectileConfig{
+			target:    v.enemy,
+			world:     v.world,
+			weapon:    gamedata.IonCannonWeapon,
+			pos:       v.pos.MoveInDirection(30, v.rotation+0.30),
+			targetPos: v.pos.MoveInDirection(300, v.rotation+0.30),
+			charge:    charge,
+		}))
+		v.scene.AddObject(newProjectileNode(projectileConfig{
+			target:    v.enemy,
+			world:     v.world,
+			weapon:    gamedata.IonCannonWeapon,
+			pos:       v.pos.MoveInDirection(30, v.rotation-0.30),
+			targetPos: v.pos.MoveInDirection(300, v.rotation-0.30),
+			charge:    charge,
+		}))
+	}
+
 }

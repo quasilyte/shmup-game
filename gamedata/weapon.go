@@ -18,7 +18,7 @@ type WeaponDesign struct {
 	ImpactSound         resource.AudioID
 }
 
-var TestWeapon = &WeaponDesign{
+var IonCannonWeapon = &WeaponDesign{
 	AttackRange:         320,
 	ProjectileSpeed:     600,
 	ExplosionRange:      10,

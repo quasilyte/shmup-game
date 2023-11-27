@@ -45,6 +45,7 @@ func (r *Runner) Init(scene *ge.Scene) {
 	vessel := newVesselNode(vesselConfig{
 		world:  r.state,
 		design: gamedata.InterceptorDesign1,
+		weapon: gamedata.IonCannonWeapon,
 	})
 	vessel.pos = gmath.Vec{X: 1024 / 2, Y: (1024 * 4) - 128}
 	vessel.rotation = 3 * math.Pi / 2
