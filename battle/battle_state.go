@@ -14,4 +14,6 @@ type battleState struct {
 	bot   botPlayer
 }
 
-type botPlayer interface{}
+type botPlayer interface {
+	GetVessel() *vesselNode
+}

@@ -58,7 +58,7 @@ func (p *projectileNode) Init(scene *ge.Scene) {
 	p.sprite = scene.NewSprite(p.weapon.ProjectileImage)
 	p.sprite.Pos.Base = &p.pos
 	p.sprite.Rotation = &p.rotation
-	p.sprite.SetColorScale(calculateColorScale(p.charge))
+	p.sprite.SetColorScale(multiplyColorScale(calculateColorScale(p.charge), 0.7))
 	p.world.stage.AddGraphics(p.sprite)
 
 	p.rotation = p.pos.AngleToPoint(p.toPos)
@@ -97,7 +97,7 @@ func (p *projectileNode) Detonate() {
 func (p *projectileNode) movementSpeed() float64 {
 	speed := p.weapon.ProjectileSpeed
 	if p.slow {
-		speed *= 0.6
+		speed *= 0.55
 	}
 	return speed
 }
@@ -106,9 +106,13 @@ func (p *projectileNode) Update(delta float64) {
 	travelled := p.movementSpeed() * delta
 	p.dist -= travelled
 
-	if !p.slow && p.dist < 128 {
+	if p.weapon.ProjectileRotateSpeed != 0 {
+		p.rotation += gmath.Rad(delta * p.weapon.ProjectileRotateSpeed)
+	}
+
+	if !p.slow && p.dist < 100 {
 		p.slow = true
-		p.sprite.SetColorScale(multiplyColorScale(p.sprite.GetColorScale(), 2.0))
+		p.sprite.SetColorScale(calculateColorScale(p.charge))
 	}
 
 	if p.dist <= 0 {

@@ -50,7 +50,7 @@ func (r *Runner) Init(scene *ge.Scene) {
 		design: gamedata.InterceptorDesign1,
 		weapon: gamedata.IonCannonWeapon,
 	})
-	vessel.pos = gmath.Vec{X: 1024 / 2, Y: (1024 * 4) - 128}
+	vessel.pos = gmath.Vec{X: 1024 / 2, Y: (1024 * 4) - 500}
 	vessel.rotation = 3 * math.Pi / 2
 	scene.AddObject(vessel)
 
@@ -71,8 +71,9 @@ func (r *Runner) Init(scene *ge.Scene) {
 		vessel := newVesselNode(vesselConfig{
 			world:  r.state,
 			design: gamedata.BossVessel1,
+			weapon: gamedata.SpinCannonWeapon,
 		})
-		vessel.pos = gmath.Vec{X: 1024 / 2, Y: (1024 * 4) - 500}
+		vessel.pos = gmath.Vec{X: 1024 / 2, Y: (1024 * 4) - 1000}
 		vessel.rotation = math.Pi / 2
 		scene.AddObject(vessel)
 
@@ -124,6 +125,14 @@ func (r *Runner) Update(delta float64) {
 				r.state.human.vessel.orders.altFire = true
 				r.state.human.vessel.orders.altFireCharge = vol
 			}
+		case gamedata.ChannelEnemyAttack:
+			v := r.state.bot.GetVessel()
+			v.orders.fire = true
+			v.orders.fireCharge = vol
+		case gamedata.ChannelEnemyAltAttack:
+			v := r.state.bot.GetVessel()
+			v.orders.altFire = true
+			v.orders.altFireCharge = vol
 		}
 	}
 

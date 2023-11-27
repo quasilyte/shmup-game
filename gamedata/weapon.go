@@ -10,12 +10,13 @@ type Damage struct {
 }
 
 type WeaponDesign struct {
-	AttackRange         float64
-	ExplosionRange      float64
-	ProjectileSpeed     float64
-	ProjectileImage     resource.ImageID
-	ProjectileExplosion resource.ImageID
-	ImpactSound         resource.AudioID
+	AttackRange           float64
+	ExplosionRange        float64
+	ProjectileSpeed       float64
+	ProjectileRotateSpeed float64
+	ProjectileImage       resource.ImageID
+	ProjectileExplosion   resource.ImageID
+	ImpactSound           resource.AudioID
 }
 
 var IonCannonWeapon = &WeaponDesign{
@@ -25,4 +26,14 @@ var IonCannonWeapon = &WeaponDesign{
 	ProjectileImage:     assets.ImageLaserProjectile1,
 	ProjectileExplosion: assets.ImageLaserExplosion1,
 	ImpactSound:         assets.AudioLaser1Impact,
+}
+
+var SpinCannonWeapon = &WeaponDesign{
+	AttackRange:           260,
+	ProjectileSpeed:       400,
+	ExplosionRange:        20,
+	ProjectileImage:       assets.ImageSpinCannonProjectile,
+	ProjectileExplosion:   assets.ImageSpinCannonExplosion,
+	ProjectileRotateSpeed: 26,
+	// ImpactSound:         assets.AudioLaser1Impact,
 }

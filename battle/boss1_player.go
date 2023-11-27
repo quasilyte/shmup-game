@@ -42,6 +42,8 @@ func (p *boss1player) Init(scene *ge.Scene) {
 	})
 }
 
+func (p *boss1player) GetVessel() *vesselNode { return p.vessel }
+
 func (p *boss1player) IsDisposed() bool { return false }
 
 func (p *boss1player) Update(delta float64) {
