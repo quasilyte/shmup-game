@@ -24,8 +24,6 @@ func NewBattleController(state *session.State) *BattleController {
 func (c *BattleController) Init(scene *ge.Scene) {
 	c.state.EventPlayerUpdate.Reset()
 
-	scene.Audio().PlayMusic(assets.AudioMusic1)
-
 	c.scene = scene
 
 	worldRect := gmath.Rect{
@@ -44,6 +42,8 @@ func (c *BattleController) Init(scene *ge.Scene) {
 		WorldRect: worldRect,
 	})
 	c.runner.Init(scene)
+
+	scene.Audio().PlayMusic(assets.AudioMusic1)
 }
 
 func (c *BattleController) Update(delta float64) {

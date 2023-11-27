@@ -50,7 +50,7 @@ func registerAudioResources(ctx *ge.Context, config Config) {
 			panic(fmt.Sprintf("parse %q module: %v", info.Path, err))
 		}
 		s := xm.NewStream()
-		s.OnEvent = config.PlayerListener
+		s.SetEventHandler(config.PlayerListener)
 		s.SetLooping(true)
 		config := xm.LoadModuleConfig{
 			LinearInterpolation: true,

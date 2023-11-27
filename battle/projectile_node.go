@@ -3,6 +3,7 @@ package battle
 import (
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/gmath"
+	"github.com/quasilyte/shmup-game/assets"
 	"github.com/quasilyte/shmup-game/gamedata"
 )
 
@@ -11,9 +12,8 @@ type projectileNode struct {
 
 	scene *ge.Scene
 
-	extraSpeed float64
-	weapon     *gamedata.WeaponDesign
-	world      *battleState
+	weapon *gamedata.WeaponDesign
+	world  *battleState
 
 	rotation gmath.Rad
 
@@ -23,6 +23,7 @@ type projectileNode struct {
 	dist float64
 
 	charge float32
+	target *vesselNode
 
 	slow     bool
 	disposed bool
@@ -31,22 +32,23 @@ type projectileNode struct {
 type projectileConfig struct {
 	world *battleState
 
+	target *vesselNode
+
 	weapon *gamedata.WeaponDesign
 
-	extraSpeed float64
-	charge     float32
-	pos        gmath.Vec
-	targetPos  gmath.Vec
+	charge    float32
+	pos       gmath.Vec
+	targetPos gmath.Vec
 }
 
 func newProjectileNode(config projectileConfig) *projectileNode {
 	return &projectileNode{
-		pos:        config.pos,
-		toPos:      config.targetPos,
-		world:      config.world,
-		weapon:     config.weapon,
-		extraSpeed: config.extraSpeed * 0.5,
-		charge:     config.charge,
+		pos:    config.pos,
+		toPos:  config.targetPos,
+		world:  config.world,
+		weapon: config.weapon,
+		charge: config.charge,
+		target: config.target,
 	}
 }
 
@@ -83,11 +85,17 @@ func (p *projectileNode) Detonate() {
 	effect.colorScale = p.sprite.GetColorScale()
 	p.scene.AddObject(effect)
 
+	if p.toPos.DistanceTo(p.target.pos) < p.weapon.ExplosionRange+p.target.design.Size {
+		if p.weapon.ImpactSound != assets.AudioNone {
+			playSound(p.world, p.toPos, p.weapon.ImpactSound)
+		}
+	}
+
 	p.Dispose()
 }
 
 func (p *projectileNode) movementSpeed() float64 {
-	speed := p.weapon.ProjectileSpeed + p.extraSpeed
+	speed := p.weapon.ProjectileSpeed
 	if p.slow {
 		speed *= 0.6
 	}

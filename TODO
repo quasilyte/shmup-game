@@ -4,5 +4,5 @@ content:
 * at least 2 enemy types
 * at least 2 programmed music tracks
 
-balance:
-* strafe burst consumes energy
+ux:
+* crosshair for the weapon

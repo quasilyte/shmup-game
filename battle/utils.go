@@ -1,8 +1,10 @@
 package battle
 
 import (
+	resource "github.com/quasilyte/ebitengine-resource"
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/gmath"
+	"github.com/quasilyte/shmup-game/assets"
 )
 
 func multiplyColorScale(cs ge.ColorScale, v float32) ge.ColorScale {
@@ -22,4 +24,19 @@ func calculateColorScale(charge float32) ge.ColorScale {
 	cs.R = 1 - charge*0.5
 	cs.B = 3 * (1 - charge)
 	return cs
+}
+
+func playSound(world *battleState, pos gmath.Vec, id resource.AudioID) {
+	if !world.human.camera.ContainsPos(pos) {
+		return
+	}
+
+	numSamples := assets.NumSamples(id)
+	if numSamples == 1 {
+		world.scene.Audio().PlaySound(id)
+	} else {
+		soundIndex := world.scene.Rand().IntRange(0, numSamples-1)
+		sound := resource.AudioID(int(id) + soundIndex)
+		world.scene.Audio().PlaySound(sound)
+	}
 }

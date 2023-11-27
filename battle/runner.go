@@ -5,6 +5,7 @@ import (
 
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/gmath"
+	"github.com/quasilyte/shmup-game/gamedata"
 	"github.com/quasilyte/shmup-game/session"
 	"github.com/quasilyte/shmup-game/viewport"
 	"github.com/quasilyte/xm"
@@ -35,11 +36,16 @@ func NewRunner(config RunnerConfig) *Runner {
 }
 
 func (r *Runner) Init(scene *ge.Scene) {
+	r.state.scene = scene
+
 	cam := viewport.NewCamera(r.state.stage, r.state.rect, 1920.0/2, 1080.0/2)
 	cam.Offset = gmath.Vec{X: 900, Y: 900}
 	scene.AddGraphics(cam)
 
-	vessel := newVesselNode(r.state)
+	vessel := newVesselNode(vesselConfig{
+		world:  r.state,
+		design: gamedata.InterceptorDesign1,
+	})
 	vessel.pos = gmath.Vec{X: 1024 / 2, Y: (1024 * 4) - 128}
 	vessel.rotation = 3 * math.Pi / 2
 	scene.AddObject(vessel)
@@ -57,8 +63,28 @@ func (r *Runner) Init(scene *ge.Scene) {
 	scene.AddObject(human)
 	r.state.human = human
 
+	{
+		vessel := newVesselNode(vesselConfig{
+			world:  r.state,
+			design: gamedata.BossVessel1,
+		})
+		vessel.pos = gmath.Vec{X: 1024 / 2, Y: (1024 * 4) - 500}
+		vessel.rotation = math.Pi / 2
+		scene.AddObject(vessel)
+
+		bot := newBoss1Player(r.state, vessel)
+		scene.AddObject(bot)
+		r.state.bot = bot
+
+		vessel.enemy = human.vessel
+		human.vessel.enemy = vessel
+	}
+
 	r.session.EventPlayerUpdate.Connect(nil, func(e xm.StreamEvent) {
 		switch e.Kind {
+		case xm.EventSync:
+			r.eventQueue.Push(e)
+
 		case xm.EventNote:
 			note, vol := e.NoteEventData()
 			if note == 97 || vol == 0 {
@@ -78,6 +104,10 @@ func (r *Runner) Update(delta float64) {
 			break
 		}
 		r.eventQueue.Pop()
+		if current.Kind == xm.EventSync {
+			r.t = current.SyncEventData()
+			continue
+		}
 		note, vol := current.NoteEventData()
 		if note < 70 {
 			r.state.human.vessel.orders.fire = true

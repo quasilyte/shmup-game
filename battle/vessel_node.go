@@ -5,6 +5,7 @@ import (
 
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/gmath"
+	"github.com/quasilyte/gsignal"
 	"github.com/quasilyte/shmup-game/assets"
 	"github.com/quasilyte/shmup-game/gamedata"
 )
@@ -13,8 +14,12 @@ type vesselNode struct {
 	rotation gmath.Rad
 	pos      gmath.Vec
 
+	enemy *vesselNode
+
 	world *battleState
 	scene *ge.Scene
+
+	design *gamedata.VesselDesign
 
 	strafing  bool
 	thrusting bool
@@ -26,6 +31,8 @@ type vesselNode struct {
 	orders vesselOrders
 
 	disposed bool
+
+	EventOnDamage gsignal.Event[gamedata.Damage]
 }
 
 type vesselOrders struct {
@@ -40,16 +47,28 @@ type vesselOrders struct {
 	altFireCharge float32
 }
 
-func newVesselNode(world *battleState) *vesselNode {
-	return &vesselNode{world: world}
+type vesselConfig struct {
+	world  *battleState
+	design *gamedata.VesselDesign
+}
+
+func newVesselNode(config vesselConfig) *vesselNode {
+	return &vesselNode{
+		world:  config.world,
+		design: config.design,
+	}
 }
 
 func (v *vesselNode) Init(scene *ge.Scene) {
 	v.scene = scene
-	v.sprite = scene.NewSprite(assets.ImageInterceptor1)
+	v.sprite = scene.NewSprite(v.design.Image)
 	v.sprite.Pos.Base = &v.pos
 	v.sprite.Rotation = &v.rotation
 	v.world.stage.AddSpriteAbove(v.sprite)
+}
+
+func (v *vesselNode) OnDamage(dmg gamedata.Damage) {
+	v.EventOnDamage.Emit(dmg)
 }
 
 func (v *vesselNode) IsDisposed() bool {
@@ -57,19 +76,23 @@ func (v *vesselNode) IsDisposed() bool {
 }
 
 func (v *vesselNode) strafeSpeed() float64 {
-	return 300
+	return v.design.StrafeSpeed
 }
 
 func (v *vesselNode) acceleration() float64 {
-	return 400
+	return v.design.Acceleration
 }
 
 func (v *vesselNode) maxSpeed() float64 {
-	return 400
+	return v.design.Speed
 }
 
 func (v *vesselNode) rotationSpeed() gmath.Rad {
-	return 3.5
+	return v.design.RotationSpeed
+}
+
+func (v *vesselNode) currentSpeed() float64 {
+	return v.velocity.Len()
 }
 
 func (v *vesselNode) Update(delta float64) {
@@ -156,7 +179,7 @@ func (v *vesselNode) Update(delta float64) {
 
 func (v *vesselNode) maybeAltFire(charge float32) {
 	v.scene.AddObject(newProjectileNode(projectileConfig{
-		// extraSpeed: v.movementSpeed(),
+		target:    v.enemy,
 		world:     v.world,
 		weapon:    gamedata.TestWeapon,
 		pos:       v.pos.MoveInDirection(30, v.rotation+0.15),
@@ -165,7 +188,7 @@ func (v *vesselNode) maybeAltFire(charge float32) {
 	}))
 
 	v.scene.AddObject(newProjectileNode(projectileConfig{
-		// extraSpeed: v.movementSpeed(),
+		target:    v.enemy,
 		world:     v.world,
 		weapon:    gamedata.TestWeapon,
 		pos:       v.pos.MoveInDirection(30, v.rotation-0.15),
@@ -176,7 +199,7 @@ func (v *vesselNode) maybeAltFire(charge float32) {
 
 func (v *vesselNode) maybeFire(charge float32) {
 	projectile := newProjectileNode(projectileConfig{
-		// extraSpeed: v.movementSpeed(),
+		target:    v.enemy,
 		world:     v.world,
 		weapon:    gamedata.TestWeapon,
 		pos:       v.pos.MoveInDirection(30, v.rotation),
