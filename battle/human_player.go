@@ -78,7 +78,7 @@ func (p *humanPlayer) updateCamera() {
 			p.distLabelPos = (gmath.Vec{X: 1920/4 - 32, Y: 1080/4 - 16}).MoveInDirection(228, p.pointerRotation)
 			displayDist := int((enemyDist - 270) / 4)
 			p.distLabel.Text = strconv.Itoa(displayDist)
-			if displayDist >= 400 {
+			if displayDist > 200 {
 				p.distLabel.SetColorScaleRGBA(255, 100, 100, 255)
 			} else {
 				p.distLabel.SetColorScaleRGBA(255, 255, 255, 255)

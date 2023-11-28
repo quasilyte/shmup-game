@@ -39,6 +39,7 @@ var SpinCannonWeapon = &WeaponDesign{
 	ExplosionRange:        20,
 	ProjectileImage:       assets.ImageSpinCannonProjectile,
 	ProjectileExplosion:   assets.ImageSpinCannonExplosion,
+	ProjectileSpawnEffect: assets.ImageSpinCannonSpawn,
 	ProjectileRotateSpeed: 26,
 	CollisionRange:        4,
 	// ImpactSound:         assets.AudioLaser1Impact,

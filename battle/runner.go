@@ -90,7 +90,7 @@ func (r *Runner) Init(scene *ge.Scene) {
 			weapon:        gamedata.SpinCannonWeapon,
 			specialWeapon: gamedata.HomingMissileSpecialWeapon,
 		})
-		vessel.pos = gmath.Vec{X: 0, Y: -480}
+		vessel.pos = gmath.Vec{X: -80, Y: -240}
 		vessel.rotation = math.Pi / 2
 		scene.AddObject(vessel)
 
@@ -108,7 +108,7 @@ func (r *Runner) Init(scene *ge.Scene) {
 			r.eventQueue.Push(e)
 
 		case xm.EventNote:
-			note, vol := e.NoteEventData()
+			note, _, vol := e.NoteEventData()
 			if note == 97 || vol == 0 {
 				return
 			}
@@ -127,6 +127,15 @@ func (r *Runner) Init(scene *ge.Scene) {
 	r.updateSectors()
 }
 
+func (r *Runner) findChannelVariant(inst int, variants []gamedata.MusicChannelVariant) *gamedata.MusicChannelVariant {
+	for i, v := range variants {
+		if v.Inst == inst {
+			return &variants[i]
+		}
+	}
+	return nil
+}
+
 func (r *Runner) Update(delta float64) {
 	for r.eventQueue.Len() != 0 {
 		current := r.eventQueue.Peek()
@@ -138,11 +147,14 @@ func (r *Runner) Update(delta float64) {
 			r.t = current.SyncEventData()
 			continue
 		}
-		note, vol := current.NoteEventData()
+		note, inst, vol := current.NoteEventData()
 		if current.Channel >= len(r.music.Channels) {
 			continue
 		}
-		channelInfo := r.music.Channels[current.Channel]
+		channelInfo := r.findChannelVariant(inst, r.music.Channels[current.Channel])
+		if channelInfo == nil {
+			continue
+		}
 		switch channelInfo.Kind {
 		case gamedata.ChannelPlayerAttack:
 			if note < channelInfo.HighNote {

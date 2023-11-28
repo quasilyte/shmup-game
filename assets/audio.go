@@ -35,7 +35,9 @@ func VolumeMultiplier(level int) float64 {
 
 func registerAudioResources(ctx *ge.Context, config Config) {
 	audioResources := map[resource.AudioID]resource.AudioInfo{
-		AudioMusic1: {Path: "music/drozerix_-_leisurely_voice.xm", Group: SoundGroupMusic},
+		AudioMusic1: {Path: "music/drozerix-leisurely_voice.xm", Group: SoundGroupMusic},
+		AudioMusic2: {Path: "music/drozerix-porn_industry.xm", Group: SoundGroupMusic},
+		// AudioMusic2: {Path: "music/drozerix-porn_industry.xm", Group: SoundGroupMusic},
 
 		AudioLaser1Impact: {Path: "sfx/laser1_impact.wav"},
 	}
@@ -82,4 +84,5 @@ const (
 	AudioLaser1Impact
 
 	AudioMusic1
+	AudioMusic2
 )

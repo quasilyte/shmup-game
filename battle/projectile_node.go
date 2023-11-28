@@ -77,7 +77,10 @@ func (p *projectileNode) Init(scene *ge.Scene) {
 			pos:   p.pos,
 			layer: aboveEffectLayer,
 			image: p.weapon.ProjectileSpawnEffect,
+			speed: fastEffectSpeed,
 		})
+		effect.noFlip = true
+		effect.rotation = p.rotation
 		effect.colorScale = p.sprite.GetColorScale()
 		p.scene.AddObject(effect)
 	}

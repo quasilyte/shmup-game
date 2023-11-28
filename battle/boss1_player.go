@@ -97,23 +97,23 @@ func (p *boss1player) Update(delta float64) {
 }
 
 func (p *boss1player) updateNoneState(delta float64) {
-	// hpPercent := p.vessel.hp / p.vessel.design.HP
+	hpPercent := p.vessel.hp / p.vessel.design.HP
 
-	// roll := p.scene.Rand().Float()
+	roll := p.scene.Rand().Float()
 	switch {
-	// case roll <= 0.05: // 5%
-	// 	p.stateTicker = p.scene.Rand().FloatRange(0.5, 1)
-	// 	p.setState(bstateIdle)
+	case roll <= 0.05: // 5%
+		p.stateTicker = p.scene.Rand().FloatRange(0.5, 1)
+		p.setState(bstateIdle)
 
-	// case roll <= 0.45: // 40%
-	// 	// Find a random pos and fly there.
-	// 	p.waypoint = randomRectPos(p.scene.Rand(), p.world.innerRect)
-	// 	p.setState(bstateRotateToWaypoint)
+	case roll <= 0.45: // 40%
+		// Find a random pos and fly there.
+		p.waypoint = p.posAroundPlayer(256)
+		p.setState(bstateRotateToWaypoint)
 
-	// case roll <= 0.55 && hpPercent >= 0.6: // 10%
-	// 	// Fly to the last known pos of the player.
-	// 	p.waypoint = correctedPos(p.world.innerRect, p.vessel.enemy.pos, 0)
-	// 	p.setState(bstateRotateToWaypoint)
+	case roll <= 0.55 && hpPercent >= 0.6: // 10%
+		// Fly to the last known pos of the player.
+		p.waypoint = p.vessel.enemy.pos.Add(p.scene.Rand().Offset(-40, 40))
+		p.setState(bstateRotateToWaypoint)
 
 	default: // 35%
 		// Follow the player.
@@ -121,6 +121,15 @@ func (p *boss1player) updateNoneState(delta float64) {
 		p.setState(bstateFollow)
 		p.canStrafe = p.scene.Rand().Chance(0.3)
 	}
+}
+
+func (p *boss1player) posAroundPlayer(r float64) gmath.Vec {
+	offset := gmath.Vec{X: r, Y: r}
+	rect := gmath.Rect{
+		Min: p.vessel.enemy.pos.Sub(offset),
+		Max: p.vessel.enemy.pos.Add(offset),
+	}
+	return randomRectPos(p.scene.Rand(), rect)
 }
 
 func (p *boss1player) setState(bstate botState) {
@@ -204,6 +213,8 @@ func (p *boss1player) updateRotateToWaypointState(delta float64) {
 	}
 
 	if p.doRotation(delta) {
+		dist := p.vessel.pos.DistanceTo(p.waypoint)
+		p.stateTicker = dist / p.vessel.maxSpeed()
 		p.setState(bstateFlyToWaypoint)
 	}
 }
@@ -211,7 +222,7 @@ func (p *boss1player) updateRotateToWaypointState(delta float64) {
 func (p *boss1player) updateFlyToWaypointState(delta float64) {
 	v := p.vessel
 
-	if p.waypoint.DistanceTo(v.pos) <= p.vessel.currentSpeed() {
+	if p.stateTicker == 0 || p.waypoint.DistanceTo(v.pos) <= p.vessel.currentSpeed() {
 		p.setState(bstateNone)
 		return
 	}
