@@ -1,6 +1,7 @@
 package viewport
 
 import (
+	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/quasilyte/ge"
 )
 
@@ -8,6 +9,9 @@ type Stage struct {
 	bg *ge.TiledBackground
 
 	LayerContainer
+
+	Shader       *ebiten.Shader
+	ShaderParams map[string]any
 }
 
 func NewStage() *Stage {

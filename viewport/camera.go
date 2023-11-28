@@ -23,7 +23,8 @@ type Camera struct {
 	Rect       gmath.Rect
 	globalRect gmath.Rect
 
-	screen *ebiten.Image
+	screen    *ebiten.Image
+	tmpScreen *ebiten.Image
 }
 
 func NewCamera(stage *Stage, world gmath.Rect, width, height float64) *Camera {
@@ -46,7 +47,8 @@ func NewCamera(stage *Stage, world gmath.Rect, width, height float64) *Camera {
 			Visible:      true,
 		},
 
-		screen: ebiten.NewImage(int(width), int(height)),
+		screen:    ebiten.NewImage(int(width), int(height)),
+		tmpScreen: ebiten.NewImage(int(width), int(height)),
 	}
 
 	return cam
@@ -73,7 +75,31 @@ func (c *Camera) Draw(screen *ebiten.Image) {
 	options.GeoM.Translate(-c.Rect.Width()*0.5, -c.Rect.Height()*0.5)
 	options.GeoM.Rotate(float64(c.Rotation.Normalized()))
 	options.GeoM.Translate(c.Rect.Width()*0.5, c.Rect.Height()*0.5)
-	screen.DrawImage(c.screen, &options)
+
+	if c.Stage.Shader != nil {
+		width := c.screen.Bounds().Dx()
+		height := c.screen.Bounds().Dy()
+		c.tmpScreen.Clear()
+		c.tmpScreen.DrawImage(c.screen, &options)
+		var options2 ebiten.DrawRectShaderOptions
+		options2.Images[0] = c.tmpScreen
+		options2.Uniforms = c.Stage.ShaderParams
+		screen.DrawRectShader(width, height, c.Stage.Shader, &options2)
+	} else {
+		screen.DrawImage(c.screen, &options)
+	}
+
+	// if c.Stage.Shader == nil {
+	// 	screen.DrawImage(c.screen, &options)
+	// } else {
+	// 	width := c.screen.Bounds().Dx()
+	// 	height := c.screen.Bounds().Dy()
+	// 	var options2 ebiten.DrawRectShaderOptions
+	// 	options2.GeoM = options.GeoM
+	// 	options2.Images[0] = c.screen
+	// 	options2.Uniforms = c.Stage.ShaderParams
+	// 	screen.DrawRectShader(width, height, c.Stage.Shader, &options2)
+	// }
 
 	if c.UI.Visible {
 		c.UI.belowObjects = drawSlice(screen, c.UI.belowObjects)

@@ -41,6 +41,9 @@ func (c *BattleController) Init(scene *ge.Scene) {
 
 	stage := viewport.NewStage()
 
+	shader := scene.Context().Loader.LoadShader(assets.ShaderCRT).Data
+	stage.Shader = shader
+
 	c.runner = battle.NewRunner(battle.RunnerConfig{
 		Session:        c.state,
 		Stage:          stage,

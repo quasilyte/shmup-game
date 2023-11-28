@@ -24,7 +24,7 @@ type WeaponDesign struct {
 }
 
 var IonCannonWeapon = &WeaponDesign{
-	AttackRange:           320,
+	AttackRange:           280,
 	ProjectileSpeed:       700,
 	ExplosionRange:        12,
 	ProjectileImage:       assets.ImageLaserProjectile1,

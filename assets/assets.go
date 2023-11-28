@@ -29,4 +29,5 @@ func RegisterResources(ctx *ge.Context, config Config) {
 	registerImageResources(ctx)
 	registerRawResources(ctx)
 	registerAudioResources(ctx, config)
+	registerShaderResources(ctx)
 }
