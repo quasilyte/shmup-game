@@ -100,6 +100,7 @@ func (p *boss1player) Update(delta float64) {
 }
 
 func (p *boss1player) updateNoneState(delta float64) {
+	return
 	hpPercent := p.vessel.hp / p.vessel.design.HP
 
 	roll := p.scene.Rand().Float()

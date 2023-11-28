@@ -20,20 +20,20 @@ type MusicInfo struct {
 	Channels [][]MusicChannelVariant
 }
 
-// var Music1 = &MusicInfo{
-// 	Channels: []MusicChannelInfo{
-// 		0: {ChannelPlayerAttack, 70},
-// 		1: {ChannelPlayerAttack, 70},
-// 		2: {ChannelPlayerAttack, 70},
+var Music1 = &MusicInfo{
+	Channels: [][]MusicChannelVariant{
+		0: {{ChannelPlayerAttack, 70, 2}, {ChannelPlayerAttack, 70, 3}},
+		1: {{ChannelPlayerAttack, 70, 2}, {ChannelPlayerAttack, 70, 3}},
+		2: {{ChannelPlayerAttack, 70, 2}, {ChannelPlayerAttack, 70, 3}},
 
-// 		9: {ChannelEnemySpecialAttack, 70},
+		9: {{ChannelEnemySpecialAttack, 70, 1}},
 
-// 		4: {ChannelEnemyAltAttack, 70},
+		4: {{ChannelEnemyAltAttack, 70, 4}},
 
-// 		10: {ChannelEnemyAttack, 70},
-// 		11: {ChannelEnemyAttack, 70},
-// 	},
-// }
+		10: {{ChannelEnemyAttack, 70, 1}},
+		11: {{ChannelEnemyAttack, 70, 0}},
+	},
+}
 
 var Music2 = &MusicInfo{
 	Channels: [][]MusicChannelVariant{
@@ -43,8 +43,6 @@ var Music2 = &MusicInfo{
 		3: {{ChannelEnemyAltAttack, 70, 6}, {ChannelEnemyAltAttack, 70, 1}, {ChannelEnemySpecialAttack, 70, 1}, {ChannelEnemyAttack, 70, 0}},
 
 		6: {{ChannelEnemySpecialAttack, 70, 5}},
-
-		// 10: {ChannelEnemyAltAttack, 70},
 
 		8: {{ChannelPlayerAttack, 50, 2}},
 		9: {{ChannelPlayerAttack, 50, 2}, {ChannelPlayerAttack, 50, 3}},

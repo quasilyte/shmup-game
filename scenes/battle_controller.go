@@ -47,13 +47,13 @@ func (c *BattleController) Init(scene *ge.Scene) {
 	c.runner = battle.NewRunner(battle.RunnerConfig{
 		Session:        c.state,
 		Stage:          stage,
-		Music:          gamedata.Music2,
+		Music:          gamedata.Music1,
 		SectorSize:     sectorSize,
 		SectorTextures: textures,
 	})
 	c.runner.Init(scene)
 
-	scene.Audio().PlayMusic(assets.AudioMusic2)
+	scene.Audio().PlayMusic(assets.AudioMusic1)
 }
 
 func (c *BattleController) Update(delta float64) {
