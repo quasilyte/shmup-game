@@ -24,10 +24,16 @@ type vesselNode struct {
 
 	hp float64
 
-	strafing  bool
-	thrusting bool
+	strafing      bool
+	thrusting     bool
+	rotatingLeft  bool
+	rotatingRight bool
 
 	velocity gmath.Vec
+
+	rotationInitialVelocity float64
+	rotationAcceleration    float64
+	rotationVelocity        float64
 
 	sprite *ge.Sprite
 
@@ -76,6 +82,9 @@ func (v *vesselNode) Init(scene *ge.Scene) {
 	v.world.stage.AddSpriteAbove(v.sprite)
 
 	v.hp = v.design.HP
+
+	v.rotationAcceleration = float64(v.design.RotationMaxSpeed * 1.2)
+	v.rotationInitialVelocity = float64(v.design.RotationMaxSpeed * 0.1)
 }
 
 func (v *vesselNode) OnDamage(dmg gamedata.Damage) {
@@ -99,7 +108,7 @@ func (v *vesselNode) maxSpeed() float64 {
 }
 
 func (v *vesselNode) rotationSpeed() gmath.Rad {
-	return v.design.RotationSpeed
+	return gmath.Rad(v.rotationVelocity)
 }
 
 func (v *vesselNode) currentSpeed() float64 {
@@ -116,9 +125,16 @@ func (v *vesselNode) Update(delta float64) {
 	wasThrusting := v.thrusting
 	v.thrusting = false
 
+	wasRotatingLeft := v.rotatingLeft
+	v.rotatingLeft = false
+
+	wasRotatingRight := v.rotatingRight
+	v.rotatingRight = false
+
 	switch {
 	case orders.rotateLeft == orders.rotateRight:
 		// Do nothing.
+		v.rotationVelocity = v.rotationInitialVelocity
 		v.sprite.FrameOffset.X = 0
 	case orders.rotateLeft:
 		if orders.strafe {
@@ -136,7 +152,12 @@ func (v *vesselNode) Update(delta float64) {
 			}
 			v.velocity = v.velocity.Add(gmath.RadToVec(v.rotation - math.Pi/2).Mulf(0.8 * v.strafeSpeed() * delta)).ClampLen(v.strafeSpeed())
 		} else {
+			if !wasRotatingLeft {
+				v.rotationVelocity = v.rotationInitialVelocity
+			}
+			v.rotationVelocity = gmath.ClampMax(v.rotationVelocity+v.rotationAcceleration*delta, float64(v.design.RotationMaxSpeed))
 			v.rotation -= v.rotationSpeed() * gmath.Rad(delta)
+			v.rotatingLeft = true
 		}
 		v.sprite.FrameOffset.X = 2 * v.sprite.FrameWidth
 	case orders.rotateRight:
@@ -155,7 +176,12 @@ func (v *vesselNode) Update(delta float64) {
 			}
 			v.velocity = v.velocity.Add(gmath.RadToVec(v.rotation + math.Pi/2).Mulf(0.8 * v.strafeSpeed() * delta)).ClampLen(v.strafeSpeed())
 		} else {
+			if !wasRotatingRight {
+				v.rotationVelocity = v.rotationInitialVelocity
+			}
+			v.rotationVelocity = gmath.ClampMax(v.rotationVelocity+v.rotationAcceleration*delta, float64(v.design.RotationMaxSpeed))
 			v.rotation += v.rotationSpeed() * gmath.Rad(delta)
+			v.rotatingRight = true
 		}
 		v.sprite.FrameOffset.X = 1 * v.sprite.FrameWidth
 	}

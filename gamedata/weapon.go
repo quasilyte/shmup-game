@@ -17,27 +17,29 @@ type WeaponDesign struct {
 	ProjectileHoming      float64
 	ProjectileImage       resource.ImageID
 	ProjectileExplosion   resource.ImageID
+	ProjectileSpawnEffect resource.ImageID
 	ImpactSound           resource.AudioID
-	CanCollide            bool
+	CollisionRange        float64
 	IgnoreChargeColor     bool
 }
 
 var IonCannonWeapon = &WeaponDesign{
-	AttackRange:         320,
-	ProjectileSpeed:     700,
-	ExplosionRange:      10,
-	ProjectileImage:     assets.ImageLaserProjectile1,
-	ProjectileExplosion: assets.ImageLaserExplosion1,
-	ImpactSound:         assets.AudioLaser1Impact,
+	AttackRange:           320,
+	ProjectileSpeed:       700,
+	ExplosionRange:        12,
+	ProjectileImage:       assets.ImageLaserProjectile1,
+	ProjectileExplosion:   assets.ImageLaserExplosion1,
+	ProjectileSpawnEffect: assets.ImageLaserExplosion1,
+	ImpactSound:           assets.AudioLaser1Impact,
 }
 
 var SpinCannonWeapon = &WeaponDesign{
-	AttackRange:           400,
-	ProjectileSpeed:       320,
+	AttackRange:           420,
+	ProjectileSpeed:       280,
 	ExplosionRange:        20,
 	ProjectileImage:       assets.ImageSpinCannonProjectile,
 	ProjectileExplosion:   assets.ImageSpinCannonExplosion,
 	ProjectileRotateSpeed: 26,
-	CanCollide:            true,
+	CollisionRange:        4,
 	// ImpactSound:         assets.AudioLaser1Impact,
 }

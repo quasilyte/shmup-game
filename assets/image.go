@@ -26,6 +26,7 @@ func registerImageResources(ctx *ge.Context) {
 		ImageTileset1: {Path: "image/landscape/tiles1.png"},
 
 		ImageBattleOverlay: {Path: "image/ui/battle_hud.png"},
+		ImageTargetPointer: {Path: "image/ui/pointer.png"},
 	}
 
 	for id, res := range imageResources {
@@ -54,4 +55,5 @@ const (
 	ImageTileset1
 
 	ImageBattleOverlay
+	ImageTargetPointer
 )

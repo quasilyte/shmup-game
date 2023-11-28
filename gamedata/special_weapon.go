@@ -16,7 +16,7 @@ var HomingMissileSpecialWeapon = &SpecialWeaponDesign{
 		ProjectileImage:     assets.ImageHomingMissile,
 		ProjectileExplosion: assets.ImageMissileExplosion,
 		ProjectileHoming:    140,
-		CanCollide:          true,
+		CollisionRange:      1,
 		IgnoreChargeColor:   true,
 	},
 }

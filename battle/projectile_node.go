@@ -70,6 +70,17 @@ func (p *projectileNode) Init(scene *ge.Scene) {
 	if p.weapon.ProjectileHoming != 0 {
 		p.velocity = gmath.RadToVec(p.rotation).Mulf(p.weapon.ProjectileSpeed)
 	}
+
+	if p.weapon.ProjectileSpawnEffect != assets.ImageNone {
+		effect := newEffectNode(effectConfig{
+			world: p.world,
+			pos:   p.pos,
+			layer: aboveEffectLayer,
+			image: p.weapon.ProjectileSpawnEffect,
+		})
+		effect.colorScale = p.sprite.GetColorScale()
+		p.scene.AddObject(effect)
+	}
 }
 
 func (p *projectileNode) IsDisposed() bool {
@@ -81,7 +92,7 @@ func (p *projectileNode) Dispose() {
 	p.sprite.Dispose()
 }
 
-func (p *projectileNode) Detonate() {
+func (p *projectileNode) Detonate(collided bool) {
 	effect := newEffectNode(effectConfig{
 		world: p.world,
 		pos:   p.pos,
@@ -91,7 +102,7 @@ func (p *projectileNode) Detonate() {
 	effect.colorScale = p.sprite.GetColorScale()
 	p.scene.AddObject(effect)
 
-	if p.toPos.DistanceTo(p.target.pos) < p.weapon.ExplosionRange+p.target.design.Size {
+	if collided || (p.toPos.DistanceTo(p.target.pos) < p.weapon.ExplosionRange+p.target.design.Size) {
 		if p.weapon.ImpactSound != assets.AudioNone {
 			playSound(p.world, p.toPos, p.weapon.ImpactSound)
 		}
@@ -128,8 +139,15 @@ func (p *projectileNode) Update(delta float64) {
 		}
 	}
 
+	if p.weapon.CollisionRange != 0 {
+		if p.pos.DistanceTo(p.target.pos) < p.weapon.CollisionRange+p.target.design.Size {
+			p.Detonate(true)
+			return
+		}
+	}
+
 	if p.dist <= 0 {
-		p.Detonate()
+		p.Detonate(false)
 		return
 	}
 
