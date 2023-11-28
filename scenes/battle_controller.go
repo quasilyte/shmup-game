@@ -28,7 +28,7 @@ func (c *BattleController) Init(scene *ge.Scene) {
 	c.scene = scene
 
 	worldRect := gmath.Rect{
-		Max: gmath.Vec{X: 1024, Y: 1024 * 4},
+		Max: gmath.Vec{X: 1024 * 3, Y: 1024 * 3},
 	}
 
 	bg := ge.NewTiledBackground(scene.Context())

@@ -5,6 +5,7 @@ import (
 
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/gmath"
+	"github.com/quasilyte/shmup-game/assets"
 	"github.com/quasilyte/shmup-game/gamedata"
 	"github.com/quasilyte/shmup-game/session"
 	"github.com/quasilyte/shmup-game/viewport"
@@ -32,6 +33,10 @@ func NewRunner(config RunnerConfig) *Runner {
 		state: &battleState{
 			stage: config.Stage,
 			rect:  config.WorldRect,
+			innerRect: gmath.Rect{
+				Min: config.WorldRect.Min.Add(gmath.Vec{X: 160, Y: 128}),
+				Max: config.WorldRect.Max.Sub(gmath.Vec{X: 160, Y: 128}),
+			},
 		},
 		eventQueue: newQueue[xm.StreamEvent](320),
 		music:      config.Music,
@@ -42,7 +47,6 @@ func (r *Runner) Init(scene *ge.Scene) {
 	r.state.scene = scene
 
 	cam := viewport.NewCamera(r.state.stage, r.state.rect, 1920.0/2, 1080.0/2)
-	cam.Offset = gmath.Vec{X: 900, Y: 900}
 	scene.AddGraphics(cam)
 
 	vessel := newVesselNode(vesselConfig{
@@ -50,13 +54,13 @@ func (r *Runner) Init(scene *ge.Scene) {
 		design: gamedata.InterceptorDesign1,
 		weapon: gamedata.IonCannonWeapon,
 	})
-	vessel.pos = gmath.Vec{X: 1024 / 2, Y: (1024 * 4) - 500}
+	vessel.pos = gmath.Vec{X: 1024, Y: 1024 + 200}
 	vessel.rotation = 3 * math.Pi / 2
 	scene.AddObject(vessel)
 
-	// overlay := scene.NewSprite(assets.ImageBattleOverlay)
-	// overlay.Centered = false
-	// cam.UI.AddGraphics(overlay)
+	overlay := scene.NewSprite(assets.ImageBattleOverlay)
+	overlay.Centered = false
+	cam.UI.AddGraphics(overlay)
 
 	human := &humanPlayer{
 		world:  r.state,
@@ -74,7 +78,7 @@ func (r *Runner) Init(scene *ge.Scene) {
 			weapon:        gamedata.SpinCannonWeapon,
 			specialWeapon: gamedata.HomingMissileSpecialWeapon,
 		})
-		vessel.pos = gmath.Vec{X: 1024/2 - 100, Y: (1024 * 4) - 800}
+		vessel.pos = gmath.Vec{X: 1024, Y: 1024 - 200}
 		vessel.rotation = math.Pi / 2
 		scene.AddObject(vessel)
 

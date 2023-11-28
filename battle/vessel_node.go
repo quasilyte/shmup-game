@@ -22,6 +22,8 @@ type vesselNode struct {
 	design *gamedata.VesselDesign
 	weapon *weaponSystem
 
+	hp float64
+
 	strafing  bool
 	thrusting bool
 
@@ -72,6 +74,8 @@ func (v *vesselNode) Init(scene *ge.Scene) {
 	v.sprite.Pos.Base = &v.pos
 	v.sprite.Rotation = &v.rotation
 	v.world.stage.AddSpriteAbove(v.sprite)
+
+	v.hp = v.design.HP
 }
 
 func (v *vesselNode) OnDamage(dmg gamedata.Damage) {
@@ -175,6 +179,10 @@ func (v *vesselNode) Update(delta float64) {
 	}
 
 	v.pos = v.pos.Add(v.velocity.Mulf(delta))
+	if !v.world.rect.Contains(v.pos) {
+		// Bounce back to the bounds.
+		v.velocity = v.velocity.Neg()
+	}
 
 	if orders.fire {
 		v.maybeFire(orders.fireCharge)

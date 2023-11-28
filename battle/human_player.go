@@ -1,6 +1,8 @@
 package battle
 
 import (
+	"math"
+
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/ge/input"
 	"github.com/quasilyte/gmath"
@@ -33,9 +35,9 @@ func (p *humanPlayer) Update(delta float64) {
 }
 
 func (p *humanPlayer) updateCamera() {
-	// p.camera.Rotation = -math.Pi/2 - p.vessel.rotation.Normalized()
+	p.camera.Rotation = -math.Pi/2 - p.vessel.rotation.Normalized()
 
-	p.camera.SetOffset(p.vessel.pos.Sub(gmath.Vec{Y: 128}).Sub(gmath.Vec{
+	p.camera.SetOffset(p.vessel.pos.MoveInDirection(164, p.vessel.rotation).Sub(gmath.Vec{
 		X: p.camera.Rect.Width() * 0.5,
 		Y: p.camera.Rect.Height() * 0.5,
 	}))
