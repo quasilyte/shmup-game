@@ -9,7 +9,8 @@ import (
 type VesselDesign struct {
 	Image resource.ImageID
 
-	HP float64
+	HP     float64
+	Energy float64
 
 	Size float64
 
@@ -22,8 +23,9 @@ type VesselDesign struct {
 var InterceptorDesign1 = &VesselDesign{
 	Image: assets.ImageInterceptor1,
 
-	HP:   100,
-	Size: 16,
+	HP:     100,
+	Energy: 100,
+	Size:   16,
 
 	Acceleration:     150,
 	Speed:            300,

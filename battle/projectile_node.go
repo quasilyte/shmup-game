@@ -106,6 +106,7 @@ func (p *projectileNode) Detonate(collided bool) {
 	p.scene.AddObject(effect)
 
 	if collided || (p.toPos.DistanceTo(p.target.pos) < p.weapon.ExplosionRange+p.target.design.Size) {
+		p.target.OnDamage(p.weapon.Damage)
 		if p.weapon.ImpactSound != assets.AudioNone {
 			playSound(p.world, p.toPos, p.weapon.ImpactSound)
 		}

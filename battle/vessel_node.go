@@ -22,7 +22,8 @@ type vesselNode struct {
 	design *gamedata.VesselDesign
 	weapon *weaponSystem
 
-	hp float64
+	hp     float64
+	energy float64
 
 	strafing      bool
 	thrusting     bool
@@ -41,7 +42,8 @@ type vesselNode struct {
 
 	disposed bool
 
-	EventOnDamage gsignal.Event[gamedata.Damage]
+	EventOnDamage  gsignal.Event[gamedata.Damage]
+	EventDestroyed gsignal.Event[gsignal.Void]
 }
 
 type vesselOrders struct {
@@ -82,13 +84,55 @@ func (v *vesselNode) Init(scene *ge.Scene) {
 	v.world.stage.AddSpriteAbove(v.sprite)
 
 	v.hp = v.design.HP
+	v.energy = v.design.Energy
 
 	v.rotationAcceleration = float64(v.design.RotationMaxSpeed * 1.2)
 	v.rotationInitialVelocity = float64(v.design.RotationMaxSpeed * 0.1)
 }
 
 func (v *vesselNode) OnDamage(dmg gamedata.Damage) {
+	if v.disposed {
+		return
+	}
+
+	v.hp = gmath.ClampMin(v.hp-dmg.HP, 0)
+	if v.hp == 0 {
+		v.destroy()
+		return
+	}
+
 	v.EventOnDamage.Emit(dmg)
+}
+
+func (v *vesselNode) destroy() {
+	for i := 0; i < 7; i++ {
+		v.scene.AddObject(newEffectNode(effectConfig{
+			world:    v.world,
+			pos:      v.pos.Add(v.scene.Rand().Offset(-22, 22)),
+			layer:    slightlyAboveEffectLayer,
+			speed:    fastEffectSpeed,
+			image:    assets.ImageExplosionSmoke,
+			rotation: v.scene.Rand().Rad(),
+		}))
+	}
+	for i := 0; i < 4; i++ {
+		v.scene.AddObject(newEffectNode(effectConfig{
+			world:    v.world,
+			pos:      v.pos.Add(v.scene.Rand().Offset(-16, 16)),
+			layer:    slightlyAboveEffectLayer,
+			speed:    normalEffectSpeed,
+			image:    assets.ImageFireExplosion,
+			rotation: v.scene.Rand().Rad(),
+		}))
+	}
+
+	v.Dispose()
+	v.EventDestroyed.Emit(gsignal.Void{})
+}
+
+func (v *vesselNode) Dispose() {
+	v.sprite.Dispose()
+	v.disposed = true
 }
 
 func (v *vesselNode) IsDisposed() bool {

@@ -10,6 +10,7 @@ type SpecialWeaponDesign struct {
 
 var HomingMissileSpecialWeapon = &SpecialWeaponDesign{
 	Base: &WeaponDesign{
+		Damage:                Damage{HP: 10},
 		AttackRange:           500,
 		ProjectileSpeed:       250,
 		ExplosionRange:        26,

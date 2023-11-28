@@ -10,6 +10,7 @@ type Damage struct {
 }
 
 type WeaponDesign struct {
+	Damage                Damage
 	AttackRange           float64
 	ExplosionRange        float64
 	ProjectileSpeed       float64
@@ -24,6 +25,7 @@ type WeaponDesign struct {
 }
 
 var IonCannonWeapon = &WeaponDesign{
+	Damage:                Damage{HP: 10},
 	AttackRange:           280,
 	ProjectileSpeed:       700,
 	ExplosionRange:        12,
@@ -34,6 +36,7 @@ var IonCannonWeapon = &WeaponDesign{
 }
 
 var SpinCannonWeapon = &WeaponDesign{
+	Damage:                Damage{HP: 15},
 	AttackRange:           420,
 	ProjectileSpeed:       280,
 	ExplosionRange:        20,

@@ -22,13 +22,17 @@ func registerImageResources(ctx *ge.Context) {
 		ImageSpinCannonSpawn:     {Path: "image/effect/spin_cannon_spawn.png", FrameWidth: 24},
 		ImageMissileExplosion:    {Path: "image/effect/missile_impact.png", FrameWidth: 24},
 		ImageMissileSpawn:        {Path: "image/effect/missile_spawn.png", FrameWidth: 15},
+		ImageExplosionSmoke:      {Path: "image/effect/explosion_smoke.png", FrameWidth: 32},
+		ImageFireExplosion:       {Path: "image/effect/fire_explosion.png", FrameWidth: 32},
 
 		ImageDashEffect: {Path: "image/effect/dash.png", FrameWidth: 30},
 
 		ImageTileset1: {Path: "image/landscape/tiles1.png"},
 
-		ImageBattleOverlay: {Path: "image/ui/battle_hud.png"},
-		ImageTargetPointer: {Path: "image/ui/pointer.png"},
+		ImageBattleOverlay:   {Path: "image/ui/battle_hud.png"},
+		ImageTargetPointer:   {Path: "image/ui/pointer.png"},
+		ImageBattleBarHP:     {Path: "image/ui/hp_bar.png"},
+		ImageBattleBarEnergy: {Path: "image/ui/energy_bar.png"},
 	}
 
 	for id, res := range imageResources {
@@ -53,6 +57,8 @@ const (
 	ImageSpinCannonSpawn
 	ImageMissileExplosion
 	ImageMissileSpawn
+	ImageExplosionSmoke
+	ImageFireExplosion
 
 	ImageDashEffect
 
@@ -60,4 +66,6 @@ const (
 
 	ImageBattleOverlay
 	ImageTargetPointer
+	ImageBattleBarHP
+	ImageBattleBarEnergy
 )

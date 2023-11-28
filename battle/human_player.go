@@ -41,8 +41,19 @@ func (p *humanPlayer) Init(scene *ge.Scene) {
 	p.distLabel.AlignHorizontal = ge.AlignHorizontalCenter
 	p.distLabel.AlignVertical = ge.AlignVerticalCenter
 	p.distLabel.Pos.Base = &p.distLabelPos
-	p.distLabel.Text = "99"
+	p.distLabel.Text = "???"
 	p.camera.UI.AddGraphicsAbove(p.distLabel)
+
+	{
+		pos := gmath.Vec{X: 182, Y: 49}
+		hpBar := newValueBar(p.camera, pos, &p.vessel.hp, p.vessel.design.HP, true)
+		scene.AddObject(hpBar)
+	}
+	{
+		pos := gmath.Vec{X: 182 + 486, Y: 49}
+		energyBar := newValueBar(p.camera, pos, &p.vessel.energy, p.vessel.design.Energy, false)
+		scene.AddObject(energyBar)
+	}
 }
 
 func (p *humanPlayer) IsDisposed() bool {
