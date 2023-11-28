@@ -1,6 +1,7 @@
 package scenes
 
 import (
+	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/shmup-game/assets"
@@ -27,21 +28,25 @@ func (c *BattleController) Init(scene *ge.Scene) {
 
 	c.scene = scene
 
-	worldRect := gmath.Rect{
-		Max: gmath.Vec{X: 1024 * 3, Y: 1024 * 3},
+	sectorSize := gmath.Vec{X: 960, Y: 640}
+	textures := make([]*ebiten.Image, 16)
+
+	for i := range textures {
+		bg := ge.NewTiledBackground(scene.Context())
+		bg.LoadTilesetWithRand(scene.Context(), scene.Rand(), sectorSize.X, sectorSize.Y, assets.ImageTileset1, assets.RawTiles1)
+		img := ebiten.NewImage(int(sectorSize.X), int(sectorSize.Y))
+		bg.Draw(img)
+		textures[i] = img
 	}
 
-	bg := ge.NewTiledBackground(scene.Context())
-	bg.LoadTilesetWithRand(scene.Context(), scene.Rand(), worldRect.Width(), worldRect.Height(), assets.ImageTileset1, assets.RawTiles1)
-
 	stage := viewport.NewStage()
-	stage.SetBackground(bg)
 
 	c.runner = battle.NewRunner(battle.RunnerConfig{
-		Session:   c.state,
-		Stage:     stage,
-		Music:     gamedata.Music1,
-		WorldRect: worldRect,
+		Session:        c.state,
+		Stage:          stage,
+		Music:          gamedata.Music1,
+		SectorSize:     sectorSize,
+		SectorTextures: textures,
 	})
 	c.runner.Init(scene)
 

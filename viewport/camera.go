@@ -64,7 +64,6 @@ func (c *Camera) Draw(screen *ebiten.Image) {
 		X: -c.Offset.X,
 		Y: -c.Offset.Y,
 	}
-	c.Stage.bg.DrawPartialWithOffset(c.screen, c.globalRect, drawOffset)
 	c.drawLayer(c.screen, &c.Stage.belowObjects, drawOffset)
 	c.drawLayer(c.screen, &c.Stage.objects, drawOffset)
 	c.drawLayer(c.screen, &c.Stage.slightlyAboveObjects, drawOffset)

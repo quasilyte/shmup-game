@@ -97,27 +97,27 @@ func (p *boss1player) Update(delta float64) {
 }
 
 func (p *boss1player) updateNoneState(delta float64) {
-	hpPercent := p.vessel.hp / p.vessel.design.HP
+	// hpPercent := p.vessel.hp / p.vessel.design.HP
 
-	roll := p.scene.Rand().Float()
+	// roll := p.scene.Rand().Float()
 	switch {
-	case roll <= 0.05: // 5%
-		p.stateTicker = p.scene.Rand().FloatRange(0.5, 1)
-		p.setState(bstateIdle)
+	// case roll <= 0.05: // 5%
+	// 	p.stateTicker = p.scene.Rand().FloatRange(0.5, 1)
+	// 	p.setState(bstateIdle)
 
-	case roll <= 0.45: // 40%
-		// Find a random pos and fly there.
-		p.waypoint = randomRectPos(p.scene.Rand(), p.world.innerRect)
-		p.setState(bstateRotateToWaypoint)
+	// case roll <= 0.45: // 40%
+	// 	// Find a random pos and fly there.
+	// 	p.waypoint = randomRectPos(p.scene.Rand(), p.world.innerRect)
+	// 	p.setState(bstateRotateToWaypoint)
 
-	case roll <= 0.55 && hpPercent >= 0.6: // 10%
-		// Fly to the last known pos of the player.
-		p.waypoint = correctedPos(p.world.innerRect, p.vessel.enemy.pos, 0)
-		p.setState(bstateRotateToWaypoint)
+	// case roll <= 0.55 && hpPercent >= 0.6: // 10%
+	// 	// Fly to the last known pos of the player.
+	// 	p.waypoint = correctedPos(p.world.innerRect, p.vessel.enemy.pos, 0)
+	// 	p.setState(bstateRotateToWaypoint)
 
 	default: // 35%
 		// Follow the player.
-		p.stateTicker = p.scene.Rand().FloatRange(1, 6.5)
+		p.stateTicker = p.scene.Rand().FloatRange(1, 10.5)
 		p.setState(bstateFollow)
 		p.canStrafe = p.scene.Rand().Chance(0.3)
 	}
@@ -180,9 +180,9 @@ func (p *boss1player) updateFollowState(delta float64) {
 	if p.rotationDelay == 0 && p.rotationDelta == rotationDeltaUnset {
 		if angleDelta.Abs() > 0.5 {
 			p.rotationDelta = float64(angleDelta) + p.scene.Rand().FloatRange(-0.05, 0.05)
-			p.rotationDelay = p.scene.Rand().FloatRange(1.1, 2.5)
+			p.rotationDelay = p.scene.Rand().FloatRange(1.1, 3.5)
 		} else {
-			p.rotationDelay = p.scene.Rand().FloatRange(0.8, 2)
+			p.rotationDelay = p.scene.Rand().FloatRange(0.5, 1.5)
 		}
 	}
 

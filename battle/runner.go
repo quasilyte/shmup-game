@@ -1,9 +1,13 @@
 package battle
 
 import (
+	"fmt"
 	"math"
 
+	"github.com/hajimehoshi/ebiten/v2"
+	resource "github.com/quasilyte/ebitengine-resource"
 	"github.com/quasilyte/ge"
+	"github.com/quasilyte/ge/xslices"
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/shmup-game/assets"
 	"github.com/quasilyte/shmup-game/gamedata"
@@ -18,13 +22,21 @@ type Runner struct {
 	eventQueue *queue[xm.StreamEvent]
 	music      *gamedata.MusicInfo
 	t          float64
+
+	cam            *viewport.Camera
+	sectorSize     gmath.Vec
+	sectorTextures []*ebiten.Image
+	sectorSprites  []*ge.Sprite
+	currentSectors []int
+	tmpSlice       []int
 }
 
 type RunnerConfig struct {
-	WorldRect gmath.Rect
-	Music     *gamedata.MusicInfo
-	Session   *session.State
-	Stage     *viewport.Stage
+	SectorSize     gmath.Vec
+	SectorTextures []*ebiten.Image
+	Music          *gamedata.MusicInfo
+	Session        *session.State
+	Stage          *viewport.Stage
 }
 
 func NewRunner(config RunnerConfig) *Runner {
@@ -32,14 +44,13 @@ func NewRunner(config RunnerConfig) *Runner {
 		session: config.Session,
 		state: &battleState{
 			stage: config.Stage,
-			rect:  config.WorldRect,
-			innerRect: gmath.Rect{
-				Min: config.WorldRect.Min.Add(gmath.Vec{X: 160, Y: 128}),
-				Max: config.WorldRect.Max.Sub(gmath.Vec{X: 160, Y: 128}),
-			},
 		},
-		eventQueue: newQueue[xm.StreamEvent](320),
-		music:      config.Music,
+		eventQueue:     newQueue[xm.StreamEvent](320),
+		music:          config.Music,
+		sectorTextures: config.SectorTextures,
+		sectorSize:     config.SectorSize,
+		tmpSlice:       make([]int, 0, 12),
+		sectorSprites:  make([]*ge.Sprite, 12),
 	}
 }
 
@@ -47,6 +58,7 @@ func (r *Runner) Init(scene *ge.Scene) {
 	r.state.scene = scene
 
 	cam := viewport.NewCamera(r.state.stage, r.state.rect, 1920.0/2, 1080.0/2)
+	r.cam = cam
 	scene.AddGraphics(cam)
 
 	vessel := newVesselNode(vesselConfig{
@@ -54,7 +66,7 @@ func (r *Runner) Init(scene *ge.Scene) {
 		design: gamedata.InterceptorDesign1,
 		weapon: gamedata.IonCannonWeapon,
 	})
-	vessel.pos = gmath.Vec{X: 1024, Y: 1024 + 200}
+	vessel.pos = gmath.Vec{X: 0, Y: 0}
 	vessel.rotation = 3 * math.Pi / 2
 	scene.AddObject(vessel)
 
@@ -78,7 +90,7 @@ func (r *Runner) Init(scene *ge.Scene) {
 			weapon:        gamedata.SpinCannonWeapon,
 			specialWeapon: gamedata.HomingMissileSpecialWeapon,
 		})
-		vessel.pos = gmath.Vec{X: 1024, Y: 1024 - 200}
+		vessel.pos = gmath.Vec{X: 0, Y: -480}
 		vessel.rotation = math.Pi / 2
 		scene.AddObject(vessel)
 
@@ -103,6 +115,16 @@ func (r *Runner) Init(scene *ge.Scene) {
 			r.eventQueue.Push(e)
 		}
 	})
+
+	for i := range r.sectorSprites {
+		s := ge.NewSprite(scene.Context())
+		s.Centered = false
+		s.Visible = false
+		r.sectorSprites[i] = s
+		r.cam.Stage.AddSpriteBelow(s)
+	}
+
+	r.updateSectors()
 }
 
 func (r *Runner) Update(delta float64) {
@@ -145,7 +167,105 @@ func (r *Runner) Update(delta float64) {
 		}
 	}
 
+	r.updateSectors()
+
 	r.t += delta
 
 	r.state.stage.Update()
+}
+
+func (r *Runner) updateSectors() {
+	startX, startY, endX, endY := r.getVisibleSectors(r.state.human.CameraPos(), 1080/2, 1080/2)
+
+	r.tmpSlice = r.tmpSlice[:0]
+	for y := startY; y <= endY; y++ {
+		for x := startX; x <= endX; x++ {
+			r.tmpSlice = append(r.tmpSlice, r.getSectorID(x, y))
+		}
+	}
+	if xslices.Equal(r.tmpSlice, r.currentSectors) {
+		// Nothing to do.
+		return
+	}
+
+	if len(r.tmpSlice) > len(r.sectorSprites) {
+		fmt.Printf("%d,%d => %d,%d (%d)\n", startX, startY, endX, endY, len(r.tmpSlice))
+	}
+
+	// Update sector sprites.
+	r.currentSectors = r.currentSectors[:0]
+	r.currentSectors = append(r.currentSectors, r.tmpSlice...)
+	for _, s := range r.sectorSprites {
+		s.Visible = false
+	}
+	spriteIndex := 0
+	for y := startY; y <= endY; y++ {
+		for x := startX; x <= endX; x++ {
+			s := r.sectorSprites[spriteIndex]
+			s.Visible = true
+			s.Pos.Offset = r.getSectorPos(x, y)
+			s.SetImage(resource.Image{Data: r.getSectorTexture(x, y)})
+			spriteIndex++
+		}
+	}
+}
+
+func (r *Runner) getSectorID(x, y int) int {
+	return y + 10*x
+}
+
+func (r *Runner) getSectorCoords(pos gmath.Vec) (x, y int) {
+	return int(pos.X / r.sectorSize.X), int(pos.Y / r.sectorSize.Y)
+}
+
+func (r *Runner) getSectorRect(x, y int) gmath.Rect {
+	return gmath.Rect{
+		Min: gmath.Vec{X: float64(x) * r.sectorSize.X, Y: float64(y) * r.sectorSize.Y},
+		Max: gmath.Vec{X: float64(x+1) * r.sectorSize.X, Y: float64(y+1) * r.sectorSize.Y},
+	}
+}
+
+func (r *Runner) getSectorPos(x, y int) gmath.Vec {
+	return gmath.Vec{
+		X: float64(x) * r.sectorSize.X,
+		Y: float64(y) * r.sectorSize.Y,
+	}
+}
+
+func (r *Runner) getSectorTexture(x, y int) *ebiten.Image {
+	hash := uint64(r.getSectorID(x, y))
+	return r.sectorTextures[hash%uint64(len(r.sectorTextures))]
+}
+
+func (r *Runner) getVisibleSectors(pos gmath.Vec, camWidth, camHeight float64) (startX, startY, endX, endY int) {
+	sectorX, sectorY := r.getSectorCoords(pos)
+	sectorRect := r.getSectorRect(sectorX, sectorY)
+
+	// Determine how many sectors we need to consider.
+	// In the simplest case, it's a single sector,
+	// but sometimes we need to check the adjacent sectors too.
+	startX = sectorX
+	startY = sectorY
+	endX = sectorX
+	endY = sectorY
+	leftmostPos := gmath.Vec{X: pos.X - camWidth, Y: pos.Y - camHeight}
+	rightmostPos := gmath.Vec{X: pos.X + camWidth, Y: pos.Y + camHeight}
+	if leftmostPos.X < sectorRect.Min.X {
+		delta := sectorRect.Min.X - leftmostPos.X
+		startX -= int(math.Ceil(delta / r.sectorSize.X))
+	}
+	if rightmostPos.X > sectorRect.Max.X {
+		delta := rightmostPos.X - sectorRect.Max.X
+		endX += int(math.Ceil(delta / r.sectorSize.X))
+	}
+	if leftmostPos.Y < sectorRect.Min.Y {
+		delta := sectorRect.Min.Y - leftmostPos.Y
+		startY -= int(math.Ceil(delta / r.sectorSize.Y))
+	}
+	if rightmostPos.Y > sectorRect.Max.Y {
+		delta := rightmostPos.Y - sectorRect.Max.Y
+		endY += int(math.Ceil(delta / r.sectorSize.Y))
+	}
+
+	return startX, startY, endX, endY
 }

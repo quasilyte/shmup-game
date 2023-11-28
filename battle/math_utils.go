@@ -32,7 +32,7 @@ func angleDelta(a, b gmath.Rad) gmath.Rad {
 	d2 := gmath.RadToVec(b)
 	cross := d1.X*d2.Y - d1.Y*d2.X
 	if cross == -0 {
-		return -math.Pi
+		return 0
 	}
 	if cross < 0 {
 		return gmath.Rad(math.Acos(d1.Dot(d2)))
@@ -40,5 +40,5 @@ func angleDelta(a, b gmath.Rad) gmath.Rad {
 	if cross > 0 {
 		return gmath.Rad(-math.Acos(d1.Dot(d2)))
 	}
-	return 0
+	return -math.Pi
 }

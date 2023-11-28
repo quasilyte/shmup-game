@@ -7,12 +7,11 @@ import (
 )
 
 type battleState struct {
-	scene     *ge.Scene
-	stage     *viewport.Stage
-	rect      gmath.Rect
-	innerRect gmath.Rect
-	human     *humanPlayer
-	bot       botPlayer
+	scene *ge.Scene
+	stage *viewport.Stage
+	rect  gmath.Rect
+	human *humanPlayer
+	bot   botPlayer
 }
 
 type botPlayer interface {

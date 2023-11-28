@@ -34,13 +34,17 @@ func (p *humanPlayer) Update(delta float64) {
 	p.updateCamera()
 }
 
+func (p *humanPlayer) CameraPos() gmath.Vec {
+	return p.vessel.pos.MoveInDirection(164, p.vessel.rotation)
+}
+
 func (p *humanPlayer) updateCamera() {
 	p.camera.Rotation = -math.Pi/2 - p.vessel.rotation.Normalized()
 
-	p.camera.SetOffset(p.vessel.pos.MoveInDirection(164, p.vessel.rotation).Sub(gmath.Vec{
+	p.camera.Offset = p.CameraPos().Sub(gmath.Vec{
 		X: p.camera.Rect.Width() * 0.5,
 		Y: p.camera.Rect.Height() * 0.5,
-	}))
+	})
 
 	// p.camera.SetOffset(p.vessel.pos.MoveInDirection(180, p.vessel.rotation).Sub(gmath.Vec{
 	// 	X: p.camera.Rect.Width() * 0.5,

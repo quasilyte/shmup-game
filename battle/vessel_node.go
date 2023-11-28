@@ -179,10 +179,6 @@ func (v *vesselNode) Update(delta float64) {
 	}
 
 	v.pos = v.pos.Add(v.velocity.Mulf(delta))
-	if !v.world.rect.Contains(v.pos) {
-		// Bounce back to the bounds.
-		v.velocity = v.velocity.Neg()
-	}
 
 	if orders.fire {
 		v.maybeFire(orders.fireCharge)

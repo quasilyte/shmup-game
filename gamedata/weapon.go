@@ -32,8 +32,8 @@ var IonCannonWeapon = &WeaponDesign{
 }
 
 var SpinCannonWeapon = &WeaponDesign{
-	AttackRange:           260,
-	ProjectileSpeed:       350,
+	AttackRange:           400,
+	ProjectileSpeed:       320,
 	ExplosionRange:        20,
 	ProjectileImage:       assets.ImageSpinCannonProjectile,
 	ProjectileExplosion:   assets.ImageSpinCannonExplosion,
