@@ -19,6 +19,7 @@ const (
 	bstateFlyToWaypoint
 	bstateFollow
 	bstateRetreat
+	bstateDefense
 )
 
 type boss1player struct {
@@ -93,6 +94,8 @@ func (p *boss1player) Update(delta float64) {
 		p.updateRotateToWaypointState(delta)
 	case bstateFlyToWaypoint:
 		p.updateFlyToWaypointState(delta)
+	case bstateDefense:
+		p.updateDefenseState(delta)
 	}
 }
 
@@ -105,17 +108,23 @@ func (p *boss1player) updateNoneState(delta float64) {
 		p.stateTicker = p.scene.Rand().FloatRange(0.5, 1)
 		p.setState(bstateIdle)
 
-	case roll <= 0.45: // 40%
+	case roll <= 0.35: // 30%
 		// Find a random pos and fly there.
 		p.waypoint = p.posAroundPlayer(256)
 		p.setState(bstateRotateToWaypoint)
 
-	case roll <= 0.55 && hpPercent >= 0.6: // 10%
+	case roll <= 0.5: // 15%
+		// Actively rotate and strafe.
+		p.stateTicker = p.scene.Rand().FloatRange(3, 10)
+		p.setState(bstateDefense)
+		p.canStrafe = p.scene.Rand().Chance(0.7)
+
+	case roll <= 0.6 && hpPercent >= 0.6: // 10%
 		// Fly to the last known pos of the player.
 		p.waypoint = p.vessel.enemy.pos.Add(p.scene.Rand().Offset(-40, 40))
 		p.setState(bstateRotateToWaypoint)
 
-	default: // 35%
+	default: // 30%
 		// Follow the player.
 		p.stateTicker = p.scene.Rand().FloatRange(1, 10.5)
 		p.setState(bstateFollow)
@@ -145,6 +154,39 @@ func (p *boss1player) updateIdleState(delta float64) {
 	}
 
 	p.setState(bstateNone)
+}
+
+func (p *boss1player) updateDefenseState(delta float64) {
+	if p.stateTicker == 0 {
+		p.setState(bstateNone)
+		return
+	}
+
+	v := p.vessel
+
+	p.strafeDelay = gmath.ClampMin(p.strafeDelay-delta, 0)
+
+	if p.canStrafe && p.strafeDelay == 0 && p.rotationDelta == rotationDeltaUnset {
+		if p.scene.Rand().Bool() {
+			p.strafeLeftTime = p.scene.Rand().FloatRange(0.1, 0.45)
+			p.strafeDelay = p.scene.Rand().FloatRange(1.1, 4.8)
+		} else {
+			p.strafeRightTime = p.scene.Rand().FloatRange(0.1, 0.45)
+			p.strafeDelay = p.scene.Rand().FloatRange(1.1, 4.8)
+		}
+	}
+
+	if p.rotationDelta != rotationDeltaUnset {
+		p.doRotation(delta)
+	}
+
+	if p.rotationDelta == rotationDeltaUnset && p.strafeLeftTime == 0 && p.strafeRightTime == 0 {
+		targetAngle := v.pos.AngleToPoint(v.enemy.pos).Normalized()
+		angleDelta := angleDelta(v.rotation.Normalized(), targetAngle)
+		if angleDelta.Abs() > 0.3 {
+			p.rotationDelta = float64(angleDelta)
+		}
+	}
 }
 
 func (p *boss1player) updateFollowState(delta float64) {
