@@ -26,6 +26,7 @@ type projectileNode struct {
 	charge float32
 	target *vesselNode
 
+	dodge    bool
 	slow     bool
 	disposed bool
 }
@@ -55,6 +56,8 @@ func newProjectileNode(config projectileConfig) *projectileNode {
 
 func (p *projectileNode) Init(scene *ge.Scene) {
 	p.scene = scene
+
+	p.dodge = p.target == p.world.human.vessel
 
 	p.sprite = scene.NewSprite(p.weapon.ProjectileImage)
 	p.sprite.Pos.Base = &p.pos
@@ -144,9 +147,15 @@ func (p *projectileNode) Update(delta float64) {
 	}
 
 	if p.weapon.CollisionRange != 0 {
-		if p.pos.DistanceTo(p.target.pos) < p.weapon.CollisionRange+p.target.design.Size {
+		dist := p.pos.DistanceTo(p.target.pos)
+		distDelta := dist - (p.weapon.CollisionRange + p.target.design.Size)
+		if distDelta < 0 {
 			p.Detonate(true)
 			return
+		}
+		if p.dodge && distDelta < 20 {
+			p.dodge = false
+			p.world.result.DodgePoints++
 		}
 	}
 

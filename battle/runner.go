@@ -3,6 +3,7 @@ package battle
 import (
 	"fmt"
 	"math"
+	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	resource "github.com/quasilyte/ebitengine-resource"
@@ -22,6 +23,7 @@ type Runner struct {
 	eventQueue *queue[xm.StreamEvent]
 	music      *gamedata.MusicInfo
 	t          float64
+	startTime  time.Time
 
 	cam            *viewport.Camera
 	sectorSize     gmath.Vec
@@ -43,7 +45,8 @@ func NewRunner(config RunnerConfig) *Runner {
 	return &Runner{
 		session: config.Session,
 		state: &battleState{
-			stage: config.Stage,
+			stage:  config.Stage,
+			result: &Result{},
 		},
 		eventQueue:     newQueue[xm.StreamEvent](320),
 		music:          config.Music,
@@ -56,6 +59,7 @@ func NewRunner(config RunnerConfig) *Runner {
 
 func (r *Runner) Init(scene *ge.Scene) {
 	r.state.scene = scene
+	r.startTime = time.Now()
 
 	cam := viewport.NewCamera(r.state.stage, r.state.rect, 1920.0/2, 1080.0/2)
 	r.cam = cam
