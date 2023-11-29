@@ -35,6 +35,30 @@ var IonCannonWeapon = &WeaponDesign{
 	ImpactSound:           assets.AudioLaser1Impact,
 }
 
+var PulseLaserWeapon = &WeaponDesign{
+	Damage:                Damage{HP: 5},
+	AttackRange:           220,
+	ProjectileSpeed:       680,
+	ExplosionRange:        10,
+	ProjectileImage:       assets.ImageLaserProjectile2,
+	ProjectileExplosion:   assets.ImageLaserExplosion2,
+	ProjectileSpawnEffect: assets.ImageLaserExplosion2,
+	ImpactSound:           assets.AudioLaser1Impact,
+	CollisionRange:        2,
+}
+
+var RearCannonWeapon = &WeaponDesign{
+	Damage:                Damage{HP: 7},
+	AttackRange:           240,
+	ProjectileSpeed:       800,
+	ExplosionRange:        4,
+	ProjectileImage:       assets.ImageRearCannonProjectile,
+	ProjectileExplosion:   assets.ImageRearCannonExplosion,
+	ProjectileSpawnEffect: assets.ImageRearCannonExplosion,
+	ImpactSound:           assets.AudioLaser1Impact,
+	CollisionRange:        2,
+}
+
 var SpinCannonWeapon = &WeaponDesign{
 	Damage:                Damage{HP: 15},
 	AttackRange:           420,

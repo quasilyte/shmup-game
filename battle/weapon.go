@@ -76,6 +76,17 @@ func (w *weaponSystem) Attack(charge float32) {
 		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation, w.design))
 		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation+0.3, w.design))
 		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation-0.3, w.design))
+
+	case gamedata.PulseLaserWeapon:
+		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation, w.design))
+
+	case gamedata.RearCannonWeapon:
+		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation+math.Pi/2, w.design))
+		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation+0.3+math.Pi/2, w.design))
+		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation-0.3+math.Pi/2, w.design))
+		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation-math.Pi/2, w.design))
+		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation+0.3-math.Pi/2, w.design))
+		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation-0.3-math.Pi/2, w.design))
 	}
 
 	w.attackCounter++
@@ -88,6 +99,30 @@ func (w *weaponSystem) AltAttack(charge float32) {
 	case gamedata.IonCannonWeapon:
 		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation+0.15, w.design))
 		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation-0.15, w.design))
+
+	case gamedata.PulseLaserWeapon:
+		firePos1 := v.pos.MoveInDirection(30, v.rotation).Add((gmath.Vec{Y: 16}).Rotated(v.rotation))
+		firePos2 := v.pos.MoveInDirection(30, v.rotation).Add((gmath.Vec{Y: -16}).Rotated(v.rotation))
+		for _, firePos := range [2]gmath.Vec{firePos1, firePos2} {
+			v.world.scene.AddObject(newProjectileNode(projectileConfig{
+				target:    v.enemy,
+				world:     v.world,
+				weapon:    w.design,
+				pos:       firePos,
+				targetPos: v.pos.MoveInDirection(w.design.AttackRange, v.rotation),
+				charge:    charge,
+			}))
+		}
+
+	case gamedata.RearCannonWeapon:
+		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation+0.3+math.Pi/2+0.25, w.design))
+		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation-0.3+math.Pi/2-0.25, w.design))
+		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation+0.3+math.Pi/2+0.5, w.design))
+		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation-0.3+math.Pi/2-0.5, w.design))
+		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation+0.3-math.Pi/2+0.25, w.design))
+		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation-0.3-math.Pi/2-0.25, w.design))
+		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation+0.3-math.Pi/2+0.5, w.design))
+		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation-0.3-math.Pi/2-0.5, w.design))
 
 	case gamedata.SpinCannonWeapon:
 		rotation := v.rotation + gmath.Rad(float64(w.altAttackCounter)*math.Pi-math.Pi/2)
