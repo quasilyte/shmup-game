@@ -11,4 +11,6 @@ const (
 	ActionRotateLeft
 	ActionRotateRight
 	ActionStrafe
+
+	ActionMenuBack
 )

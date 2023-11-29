@@ -33,6 +33,17 @@ func registerImageResources(ctx *ge.Context) {
 		ImageTargetPointer:   {Path: "image/ui/pointer.png"},
 		ImageBattleBarHP:     {Path: "image/ui/hp_bar.png"},
 		ImageBattleBarEnergy: {Path: "image/ui/energy_bar.png"},
+
+		ImageMenuBg: {Path: "image/ui/menu_bg.png"},
+
+		ImageUIButtonDisabled:      {Path: "image/ebitenui/button-disabled.png"},
+		ImageUIButtonIdle:          {Path: "image/ebitenui/button-idle.png"},
+		ImageUIButtonHover:         {Path: "image/ebitenui/button-hover.png"},
+		ImageUIButtonPressed:       {Path: "image/ebitenui/button-pressed.png"},
+		ImageUISelectButtonIdle:    {Path: "image/ebitenui/select-button-idle.png"},
+		ImageUISelectButtonHover:   {Path: "image/ebitenui/select-button-hover.png"},
+		ImageUISelectButtonPressed: {Path: "image/ebitenui/select-button-pressed.png"},
+		ImageUIPanelIdle:           {Path: "image/ebitenui/panel-idle.png"},
 	}
 
 	for id, res := range imageResources {
@@ -68,4 +79,15 @@ const (
 	ImageTargetPointer
 	ImageBattleBarHP
 	ImageBattleBarEnergy
+
+	ImageMenuBg
+
+	ImageUIButtonDisabled
+	ImageUIButtonIdle
+	ImageUIButtonHover
+	ImageUIButtonPressed
+	ImageUISelectButtonIdle
+	ImageUISelectButtonHover
+	ImageUISelectButtonPressed
+	ImageUIPanelIdle
 )
