@@ -59,6 +59,30 @@ var RearCannonWeapon = &WeaponDesign{
 	CollisionRange:        2,
 }
 
+var TwinCannonWeapon = &WeaponDesign{
+	Damage:                Damage{HP: 12},
+	AttackRange:           250,
+	ProjectileSpeed:       900,
+	ExplosionRange:        8,
+	ProjectileImage:       assets.ImageTwinCannonProjectile,
+	ProjectileExplosion:   assets.ImageTwinCannonExplosion,
+	ProjectileSpawnEffect: assets.ImageTwinCannonExplosion,
+	ImpactSound:           assets.AudioLaser1Impact,
+	CollisionRange:        4,
+}
+
+var TwinCannonSmallWeapon = &WeaponDesign{
+	Damage:                Damage{HP: 5},
+	AttackRange:           250,
+	ProjectileSpeed:       900,
+	ExplosionRange:        4,
+	ProjectileImage:       assets.ImageTwinCannonSmallProjectile,
+	ProjectileExplosion:   assets.ImageTwinCannonSmallExplosion,
+	ProjectileSpawnEffect: assets.ImageTwinCannonSmallExplosion,
+	ImpactSound:           assets.AudioLaser1Impact,
+	CollisionRange:        2,
+}
+
 var SpinCannonWeapon = &WeaponDesign{
 	Damage:                Damage{HP: 15},
 	AttackRange:           420,

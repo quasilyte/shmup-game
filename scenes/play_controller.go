@@ -51,9 +51,10 @@ func (c *PlayController) Init(scene *ge.Scene) {
 		Value:     &c.state.Settings.Weapon,
 		Label:     "Weapon",
 		ValueNames: []string{
-			"Ion Cannon",
 			"Pulse Laser",
 			"Rear Cannon",
+			"Frag Cannon",
+			"Twin Cannon",
 		},
 	}))
 

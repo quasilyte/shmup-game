@@ -14,23 +14,27 @@ func registerImageResources(ctx *ge.Context) {
 		ImageInterceptor1: {Path: "image/vessel/interceptor1.png", FrameWidth: 64},
 		ImageInterceptor2: {Path: "image/vessel/interceptor2.png", FrameWidth: 64},
 
-		ImageLaserProjectile1:     {Path: "image/projectile/laser1.png"},
-		ImageLaserProjectile2:     {Path: "image/projectile/laser2.png"},
-		ImageRearCannonProjectile: {Path: "image/projectile/rear_cannon.png"},
-		ImageSpinCannonProjectile: {Path: "image/projectile/spin_cannon.png"},
-		ImageHomingMissile:        {Path: "image/projectile/homing_missile.png"},
-		ImageMegaBomb:             {Path: "image/projectile/mega_bomb.png"},
+		ImageLaserProjectile1:          {Path: "image/projectile/laser1.png"},
+		ImageLaserProjectile2:          {Path: "image/projectile/laser2.png"},
+		ImageRearCannonProjectile:      {Path: "image/projectile/rear_cannon.png"},
+		ImageTwinCannonProjectile:      {Path: "image/projectile/twin_cannon.png"},
+		ImageTwinCannonSmallProjectile: {Path: "image/projectile/twin_cannon_small.png"},
+		ImageSpinCannonProjectile:      {Path: "image/projectile/spin_cannon.png"},
+		ImageHomingMissile:             {Path: "image/projectile/homing_missile.png"},
+		ImageMegaBomb:                  {Path: "image/projectile/mega_bomb.png"},
 
-		ImageLaserExplosion1:     {Path: "image/effect/laser1_impact.png", FrameWidth: 11},
-		ImageLaserExplosion2:     {Path: "image/effect/laser2_impact.png", FrameWidth: 10},
-		ImageRearCannonExplosion: {Path: "image/effect/rear_cannon_impact.png", FrameWidth: 11},
-		ImageSpinCannonExplosion: {Path: "image/effect/spin_cannon_impact.png", FrameWidth: 26},
-		ImageSpinCannonSpawn:     {Path: "image/effect/spin_cannon_spawn.png", FrameWidth: 24},
-		ImageMissileExplosion:    {Path: "image/effect/missile_impact.png", FrameWidth: 24},
-		ImageMissileSpawn:        {Path: "image/effect/missile_spawn.png", FrameWidth: 15},
-		ImageExplosionSmoke:      {Path: "image/effect/explosion_smoke.png", FrameWidth: 32},
-		ImageFireExplosion:       {Path: "image/effect/fire_explosion.png", FrameWidth: 32},
-		ImageMegaBombImpact:      {Path: "image/effect/mega_bomb_impact.png", FrameWidth: 32},
+		ImageLaserExplosion1:          {Path: "image/effect/laser1_impact.png", FrameWidth: 11},
+		ImageLaserExplosion2:          {Path: "image/effect/laser2_impact.png", FrameWidth: 10},
+		ImageRearCannonExplosion:      {Path: "image/effect/rear_cannon_impact.png", FrameWidth: 11},
+		ImageTwinCannonExplosion:      {Path: "image/effect/twin_cannon_impact.png", FrameWidth: 32},
+		ImageTwinCannonSmallExplosion: {Path: "image/effect/twin_cannon_impact_small.png", FrameWidth: 24},
+		ImageSpinCannonExplosion:      {Path: "image/effect/spin_cannon_impact.png", FrameWidth: 26},
+		ImageSpinCannonSpawn:          {Path: "image/effect/spin_cannon_spawn.png", FrameWidth: 24},
+		ImageMissileExplosion:         {Path: "image/effect/missile_impact.png", FrameWidth: 24},
+		ImageMissileSpawn:             {Path: "image/effect/missile_spawn.png", FrameWidth: 15},
+		ImageExplosionSmoke:           {Path: "image/effect/explosion_smoke.png", FrameWidth: 32},
+		ImageFireExplosion:            {Path: "image/effect/fire_explosion.png", FrameWidth: 32},
+		ImageMegaBombImpact:           {Path: "image/effect/mega_bomb_impact.png", FrameWidth: 32},
 
 		ImageDashEffect: {Path: "image/effect/dash.png", FrameWidth: 30},
 
@@ -70,6 +74,8 @@ const (
 	ImageLaserProjectile1
 	ImageLaserProjectile2
 	ImageRearCannonProjectile
+	ImageTwinCannonProjectile
+	ImageTwinCannonSmallProjectile
 	ImageSpinCannonProjectile
 	ImageHomingMissile
 	ImageMegaBomb
@@ -77,6 +83,8 @@ const (
 	ImageLaserExplosion1
 	ImageLaserExplosion2
 	ImageRearCannonExplosion
+	ImageTwinCannonExplosion
+	ImageTwinCannonSmallExplosion
 	ImageSpinCannonExplosion
 	ImageSpinCannonSpawn
 	ImageMissileExplosion

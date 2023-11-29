@@ -73,9 +73,10 @@ func (r *Runner) Init(scene *ge.Scene) {
 	scene.AddGraphics(cam)
 
 	playerWeapons := [...]*gamedata.WeaponDesign{
-		gamedata.IonCannonWeapon,
 		gamedata.PulseLaserWeapon,
 		gamedata.RearCannonWeapon,
+		gamedata.IonCannonWeapon,
+		gamedata.TwinCannonWeapon,
 	}
 	playerSpecialWeapons := [...]*gamedata.SpecialWeaponDesign{
 		gamedata.DashSpecialWeapon,

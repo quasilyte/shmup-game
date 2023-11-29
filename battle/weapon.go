@@ -19,6 +19,7 @@ type weaponSystem struct {
 	design  *gamedata.WeaponDesign
 	special *gamedata.SpecialWeaponDesign
 
+	primaryCounter   int
 	attackCounter    int
 	altAttackCounter int
 	specialCounter   int
@@ -109,9 +110,33 @@ func (w *weaponSystem) Attack(charge float32) {
 		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation-math.Pi/2, w.design))
 		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation+0.3-math.Pi/2, w.design))
 		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation-0.3-math.Pi/2, w.design))
+
+	case gamedata.TwinCannonWeapon:
+		if w.primaryCounter%24 > 11 {
+			firePos := v.pos.MoveInDirection(10, v.rotation).Add((gmath.Vec{Y: 38}).Rotated(v.rotation))
+			v.world.scene.AddObject(newProjectileNode(projectileConfig{
+				target:    v.enemy,
+				world:     v.world,
+				weapon:    w.design,
+				pos:       firePos,
+				targetPos: firePos.MoveInDirection(w.design.AttackRange-20, v.rotation),
+				charge:    charge,
+			}))
+		} else {
+			firePos := v.pos.MoveInDirection(10, v.rotation).Add((gmath.Vec{Y: -38}).Rotated(v.rotation))
+			v.world.scene.AddObject(newProjectileNode(projectileConfig{
+				target:    v.enemy,
+				world:     v.world,
+				weapon:    w.design,
+				pos:       firePos,
+				targetPos: firePos.MoveInDirection(w.design.AttackRange-20, v.rotation),
+				charge:    charge,
+			}))
+		}
 	}
 
 	w.attackCounter++
+	w.primaryCounter++
 }
 
 func (w *weaponSystem) AltAttack(charge float32) {
@@ -156,7 +181,31 @@ func (w *weaponSystem) AltAttack(charge float32) {
 			targetPos: v.pos.MoveInDirection(w.design.AttackRange, v.rotation),
 			charge:    charge,
 		}))
+
+	case gamedata.TwinCannonWeapon:
+		if w.primaryCounter%24 > 11 {
+			firePos := v.pos.MoveInDirection(10, v.rotation).Add((gmath.Vec{Y: 46}).Rotated(v.rotation))
+			v.world.scene.AddObject(newProjectileNode(projectileConfig{
+				target:    v.enemy,
+				world:     v.world,
+				weapon:    gamedata.TwinCannonSmallWeapon,
+				pos:       firePos,
+				targetPos: firePos.MoveInDirection(w.design.AttackRange-20, v.rotation),
+				charge:    charge,
+			}))
+		} else {
+			firePos := v.pos.MoveInDirection(10, v.rotation).Add((gmath.Vec{Y: -46}).Rotated(v.rotation))
+			v.world.scene.AddObject(newProjectileNode(projectileConfig{
+				target:    v.enemy,
+				world:     v.world,
+				weapon:    gamedata.TwinCannonSmallWeapon,
+				pos:       firePos,
+				targetPos: firePos.MoveInDirection(w.design.AttackRange-20, v.rotation),
+				charge:    charge,
+			}))
+		}
 	}
 
 	w.altAttackCounter++
+	w.primaryCounter++
 }
