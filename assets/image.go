@@ -12,6 +12,7 @@ func registerImageResources(ctx *ge.Context) {
 		ImageBoss1: {Path: "image/vessel/boss1.png", FrameWidth: 64},
 
 		ImageInterceptor1: {Path: "image/vessel/interceptor1.png", FrameWidth: 64},
+		ImageInterceptor2: {Path: "image/vessel/interceptor2.png", FrameWidth: 64},
 
 		ImageLaserProjectile1:     {Path: "image/projectile/laser1.png"},
 		ImageLaserProjectile2:     {Path: "image/projectile/laser2.png"},
@@ -60,6 +61,7 @@ const (
 	ImageNone resource.ImageID = iota
 
 	ImageInterceptor1
+	ImageInterceptor2
 
 	ImageBoss1
 

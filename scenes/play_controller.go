@@ -64,6 +64,7 @@ func (c *PlayController) Init(scene *ge.Scene) {
 		Label:     "Vessel",
 		ValueNames: []string{
 			"Interceptor",
+			"Vindicator",
 		},
 	}))
 

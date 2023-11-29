@@ -76,10 +76,14 @@ func (r *Runner) Init(scene *ge.Scene) {
 		gamedata.PulseLaserWeapon,
 		gamedata.RearCannonWeapon,
 	}
+	playerVessels := [...]*gamedata.VesselDesign{
+		gamedata.InterceptorDesign1,
+		gamedata.InterceptorDesign2,
+	}
 
 	vessel := newVesselNode(vesselConfig{
 		world:  r.state,
-		design: gamedata.InterceptorDesign1,
+		design: playerVessels[r.session.Settings.Vessel],
 		weapon: playerWeapons[r.session.Settings.Weapon],
 	})
 	vessel.pos = gmath.Vec{X: 0, Y: 0}
