@@ -43,7 +43,7 @@ func (c *MainMenuController) Init(scene *ge.Scene) {
 	rowContainer.AddChild(eui.NewSeparator(nil, styles.TransparentColor))
 
 	rowContainer.AddChild(eui.NewButton(c.state.UIResources, "PLAY", func() {
-		scene.Context().ChangeScene(NewBattleController(c.state))
+		scene.Context().ChangeScene(NewPlayController(c.state))
 	}))
 
 	rowContainer.AddChild(eui.NewButton(c.state.UIResources, "SETTINGS", func() {
@@ -51,12 +51,12 @@ func (c *MainMenuController) Init(scene *ge.Scene) {
 	}))
 
 	b := eui.NewButton(c.state.UIResources, "CREDITS", func() {
-		// TODO
+		scene.Context().ChangeScene(NewCreditsController(c.state))
 	})
-	b.GetWidget().Disabled = true
 	rowContainer.AddChild(b)
 
 	if runtime.GOARCH != "wasm" {
+		rowContainer.AddChild(eui.NewSeparator(nil, styles.TransparentColor))
 		rowContainer.AddChild(eui.NewButton(c.state.UIResources, "EXIT", func() {
 			os.Exit(0)
 		}))

@@ -13,6 +13,9 @@ type battleState struct {
 	human  *humanPlayer
 	bot    botPlayer
 	result *Result
+
+	playerDamageMultiplier float64
+	botDamageMultiplier    float64
 }
 
 type botPlayer interface {

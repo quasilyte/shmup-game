@@ -15,6 +15,7 @@ type vesselNode struct {
 	pos      gmath.Vec
 
 	enemy *vesselNode
+	bot   bool
 
 	world *battleState
 	scene *ge.Scene
@@ -95,7 +96,14 @@ func (v *vesselNode) OnDamage(dmg gamedata.Damage) {
 		return
 	}
 
-	v.hp = gmath.ClampMin(v.hp-dmg.HP, 0)
+	healthDamage := dmg.HP
+	if v.bot {
+		healthDamage *= v.world.botDamageMultiplier
+	} else {
+		healthDamage *= v.world.playerDamageMultiplier
+	}
+
+	v.hp = gmath.ClampMin(v.hp-healthDamage, 0)
 	if v.hp == 0 {
 		v.destroy()
 		return

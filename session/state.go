@@ -18,6 +18,9 @@ type State struct {
 }
 
 type Settings struct {
-	SoundLevel int
-	MusicLevel int
+	Weapon        int
+	SelectedMusic int
+	Difficulty    int
+	SoundLevel    int
+	MusicLevel    int
 }

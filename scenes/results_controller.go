@@ -52,10 +52,21 @@ func (c *ResultsController) Init(scene *ge.Scene) {
 
 	score := c.calcScore()
 
+	difficulty := "easy"
+	switch c.result.Difficulty {
+	case 1:
+		difficulty = "normal"
+	case 2:
+		difficulty = "hard"
+	default:
+		difficulty = "nightmare"
+	}
+
 	lines := [][2]string{
 		{"Time played", formatDurationCompact(c.result.TimePlayed)},
 		{"Distance penalty", strconv.Itoa(int(c.result.PressurePenalty))},
 		{"Perfect dodges", strconv.Itoa(int(c.result.DodgePoints))},
+		{"Difficulty", difficulty},
 		{"Score", strconv.Itoa(score)},
 		{"Rank", c.calcRank(score)},
 	}
@@ -81,9 +92,9 @@ func (c *ResultsController) calcRank(score int) string {
 	}
 
 	switch {
-	case score >= 2000:
+	case score >= 1800:
 		return "S+"
-	case score >= 1500:
+	case score >= 1400:
 		return "S"
 	case score >= 1200:
 		return "A"
@@ -107,12 +118,21 @@ func (c *ResultsController) calcScore() int {
 
 	score := 1000.0
 
+	// Every remaining 1% of health gives ~1.5 score point.
+	score += float64(c.result.Health * 150)
+
+	// easy: 80%
+	// normal: 100%
+	// hard: 120%
+	// nightmare: 140%
+	difficultyMultiplier := 0.8 + (0.2 * float64(c.result.Difficulty))
+
 	badTimeSec := 8.0 * 60.0
 	timeSec := c.result.TimePlayed.Seconds()
 	timeMultiplier := gmath.ClampMin(1.0-(timeSec*(1/badTimeSec)), 0.0001)
 
-	score += 3.0 * float64(c.result.DodgePoints)
-	score -= float64(int(c.result.PressurePenalty))
+	score += 7.5 * float64(c.result.DodgePoints)
+	score -= float64(2 * int(c.result.PressurePenalty))
 
-	return gmath.ClampMin(int(score*timeMultiplier), 1)
+	return gmath.ClampMin(int(score*timeMultiplier*difficultyMultiplier), 1)
 }

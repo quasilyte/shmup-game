@@ -71,12 +71,16 @@ func (r *Runner) Init(scene *ge.Scene) {
 	r.cam = cam
 	scene.AddGraphics(cam)
 
+	playerWeapons := [...]*gamedata.WeaponDesign{
+		gamedata.IonCannonWeapon,
+		gamedata.PulseLaserWeapon,
+		gamedata.RearCannonWeapon,
+	}
+
 	vessel := newVesselNode(vesselConfig{
 		world:  r.state,
 		design: gamedata.InterceptorDesign1,
-		// weapon: gamedata.IonCannonWeapon,
-		// weapon: gamedata.PulseLaserWeapon,
-		weapon: gamedata.RearCannonWeapon,
+		weapon: playerWeapons[r.session.Settings.Weapon],
 	})
 	vessel.pos = gmath.Vec{X: 0, Y: 0}
 	vessel.rotation = 3 * math.Pi / 2
@@ -107,6 +111,7 @@ func (r *Runner) Init(scene *ge.Scene) {
 		})
 		vessel.pos = gmath.Vec{X: -80, Y: -240}
 		vessel.rotation = math.Pi / 2
+		vessel.bot = true
 		vessel.EventDestroyed.Connect(nil, func(gsignal.Void) {
 			r.onBattleOver(true)
 		})
@@ -143,6 +148,21 @@ func (r *Runner) Init(scene *ge.Scene) {
 	}
 
 	r.updateSectors()
+
+	switch r.session.Settings.Difficulty {
+	case 0: // Easy
+		r.state.botDamageMultiplier = 1.2
+		r.state.playerDamageMultiplier = 0.8
+	case 1: // Normal
+		r.state.botDamageMultiplier = 1.0
+		r.state.playerDamageMultiplier = 1.0
+	case 2: // Hard
+		r.state.botDamageMultiplier = 0.9
+		r.state.playerDamageMultiplier = 1.1
+	case 3: // Nightmare
+		r.state.botDamageMultiplier = 0.65
+		r.state.playerDamageMultiplier = 1.2
+	}
 }
 
 func (r *Runner) onBattleOver(victory bool) {
@@ -153,6 +173,7 @@ func (r *Runner) onBattleOver(victory bool) {
 
 	r.state.result.Victory = victory
 	r.state.result.TimePlayed = time.Since(r.startTime)
+	r.state.result.Difficulty = r.session.Settings.Difficulty
 
 	r.scene.DelayedCall(2, func() {
 		r.EventBattleOver.Emit(*r.state.result)
