@@ -24,8 +24,7 @@ func (c *MainMenuController) Init(scene *ge.Scene) {
 	scene.Audio().SetGroupVolume(assets.SoundGroupEffect, assets.VolumeMultiplier(c.state.Settings.SoundLevel))
 	scene.Audio().SetGroupVolume(assets.SoundGroupMusic, assets.VolumeMultiplier(c.state.Settings.MusicLevel))
 
-	scene.Audio().PauseCurrentMusic()
-	scene.Audio().PlayMusic(assets.AudioMusicMenu)
+	scene.Audio().ContinueMusic(assets.AudioMusicMenu)
 
 	root := widget.NewContainer(
 		widget.ContainerOpts.WidgetOpts(widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
@@ -44,6 +43,7 @@ func (c *MainMenuController) Init(scene *ge.Scene) {
 	rowContainer.AddChild(eui.NewSeparator(nil, styles.TransparentColor))
 
 	rowContainer.AddChild(eui.NewButton(c.state.UIResources, "PLAY", func() {
+		scene.Context().ChangeScene(NewBattleController(c.state))
 	}))
 
 	rowContainer.AddChild(eui.NewButton(c.state.UIResources, "SETTINGS", func() {

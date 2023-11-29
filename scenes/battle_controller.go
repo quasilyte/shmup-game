@@ -24,6 +24,8 @@ func NewBattleController(state *session.State) *BattleController {
 }
 
 func (c *BattleController) Init(scene *ge.Scene) {
+	scene.Audio().PauseCurrentMusic()
+
 	c.state.EventPlayerUpdate.Reset()
 
 	c.scene = scene
