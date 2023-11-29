@@ -53,8 +53,10 @@ func (c *ResultsController) Init(scene *ge.Scene) {
 
 	score := c.calcScore()
 
-	difficulty := "easy"
+	var difficulty string
 	switch c.result.Difficulty {
+	case 0:
+		difficulty = "easy"
 	case 1:
 		difficulty = "normal"
 	case 2:

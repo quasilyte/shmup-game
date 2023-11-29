@@ -25,7 +25,7 @@ type WeaponDesign struct {
 }
 
 var IonCannonWeapon = &WeaponDesign{
-	Damage:                Damage{HP: 10},
+	Damage:                Damage{HP: 12},
 	AttackRange:           280,
 	ProjectileSpeed:       700,
 	ExplosionRange:        12,
@@ -37,8 +37,8 @@ var IonCannonWeapon = &WeaponDesign{
 
 var PulseLaserWeapon = &WeaponDesign{
 	Damage:                Damage{HP: 5},
-	AttackRange:           220,
-	ProjectileSpeed:       680,
+	AttackRange:           200,
+	ProjectileSpeed:       660,
 	ExplosionRange:        10,
 	ProjectileImage:       assets.ImageLaserProjectile2,
 	ProjectileExplosion:   assets.ImageLaserExplosion2,
@@ -48,8 +48,8 @@ var PulseLaserWeapon = &WeaponDesign{
 }
 
 var RearCannonWeapon = &WeaponDesign{
-	Damage:                Damage{HP: 7},
-	AttackRange:           240,
+	Damage:                Damage{HP: 6},
+	AttackRange:           230,
 	ProjectileSpeed:       800,
 	ExplosionRange:        4,
 	ProjectileImage:       assets.ImageRearCannonProjectile,
