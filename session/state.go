@@ -19,6 +19,8 @@ type State struct {
 
 type Settings struct {
 	Weapon        int
+	Vessel        int
+	Special       int
 	SelectedMusic int
 	Difficulty    int
 	SoundLevel    int

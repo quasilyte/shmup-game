@@ -8,7 +8,6 @@ import (
 	"github.com/quasilyte/shmup-game/eui"
 	"github.com/quasilyte/shmup-game/gamedata"
 	"github.com/quasilyte/shmup-game/session"
-	"github.com/quasilyte/shmup-game/styles"
 )
 
 type PlayController struct {
@@ -33,32 +32,6 @@ func (c *PlayController) Init(scene *ge.Scene) {
 	root.AddChild(rowContainer)
 
 	rowContainer.AddChild(eui.NewCenteredLabel("Play", assets.BitmapFont2))
-
-	panel := eui.NewPanelWithPadding(c.state.UIResources, 300, 0, widget.NewInsetsSimple(12))
-	rowContainer.AddChild(panel)
-
-	grid := eui.NewGridContainer(3, widget.GridLayoutOpts.Spacing(24, 4),
-		widget.GridLayoutOpts.Stretch(nil, nil))
-
-	panel1rows := eui.NewRowLayoutContainerWithMinWidth(320, 8, nil)
-	panel.AddChild(panel1rows)
-	panel1rows.AddChild(eui.NewCenteredLabel("Select Level", assets.BitmapFont1))
-	panel1rows.AddChild(grid)
-
-	levelLabels := []string{"I", "II", "III"}
-	for i := range levelLabels {
-		levelID := i
-		b := eui.NewButtonWithConfig(c.state.UIResources, eui.ButtonConfig{
-			MinWidth: 120,
-			Text:     levelLabels[i],
-			OnClick: func() {
-				c.scene.Context().SaveGameData("save", c.state.Settings)
-				_ = levelID
-				c.scene.Context().ChangeScene(NewBattleController(c.state))
-			},
-		})
-		grid.AddChild(b)
-	}
 
 	rowContainer.AddChild(eui.NewSelectButton(eui.SelectButtonConfig{
 		Resources: c.state.UIResources,
@@ -87,6 +60,26 @@ func (c *PlayController) Init(scene *ge.Scene) {
 	rowContainer.AddChild(eui.NewSelectButton(eui.SelectButtonConfig{
 		Resources: c.state.UIResources,
 		Input:     c.state.Input,
+		Value:     &c.state.Settings.Vessel,
+		Label:     "Vessel",
+		ValueNames: []string{
+			"Interceptor",
+		},
+	}))
+
+	rowContainer.AddChild(eui.NewSelectButton(eui.SelectButtonConfig{
+		Resources: c.state.UIResources,
+		Input:     c.state.Input,
+		Value:     &c.state.Settings.Special,
+		Label:     "Special",
+		ValueNames: []string{
+			"Dash",
+		},
+	}))
+
+	rowContainer.AddChild(eui.NewSelectButton(eui.SelectButtonConfig{
+		Resources: c.state.UIResources,
+		Input:     c.state.Input,
 		Value:     &c.state.Settings.Difficulty,
 		Label:     "Difficulty",
 		ValueNames: []string{
@@ -97,7 +90,32 @@ func (c *PlayController) Init(scene *ge.Scene) {
 		},
 	}))
 
-	rowContainer.AddChild(eui.NewSeparator(nil, styles.TransparentColor))
+	panel := eui.NewPanelWithPadding(c.state.UIResources, 300, 0, widget.NewInsetsSimple(12))
+	rowContainer.AddChild(panel)
+
+	grid := eui.NewGridContainer(3, widget.GridLayoutOpts.Spacing(24, 4),
+		widget.GridLayoutOpts.Stretch(nil, nil))
+
+	panel1rows := eui.NewRowLayoutContainerWithMinWidth(320, 8, nil)
+	panel.AddChild(panel1rows)
+	panel1rows.AddChild(eui.NewCenteredLabel("Select Level", assets.BitmapFont1))
+	panel1rows.AddChild(grid)
+
+	levelLabels := []string{"I", "II", "III"}
+	for i := range levelLabels {
+		levelID := i
+		b := eui.NewButtonWithConfig(c.state.UIResources, eui.ButtonConfig{
+			MinWidth: 120,
+			Text:     levelLabels[i],
+			OnClick: func() {
+				c.scene.Context().SaveGameData("save", c.state.Settings)
+				_ = levelID
+				c.scene.Context().ChangeScene(NewBattleController(c.state))
+			},
+		})
+		grid.AddChild(b)
+	}
+
 	rowContainer.AddChild(eui.NewButton(c.state.UIResources, "BACK", func() {
 		c.back()
 	}))
