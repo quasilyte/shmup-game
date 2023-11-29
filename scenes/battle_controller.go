@@ -45,10 +45,12 @@ func (c *BattleController) Init(scene *ge.Scene) {
 	shader := scene.Context().Loader.LoadShader(assets.ShaderCRT).Data
 	stage.Shader = shader
 
+	music := gamedata.MusicList[c.state.Settings.SelectedMusic]
+
 	c.runner = battle.NewRunner(battle.RunnerConfig{
 		Session:        c.state,
 		Stage:          stage,
-		Music:          gamedata.Music2,
+		Music:          music,
 		SectorSize:     sectorSize,
 		SectorTextures: textures,
 	})
@@ -58,7 +60,7 @@ func (c *BattleController) Init(scene *ge.Scene) {
 		c.leaveScene(NewResultsController(c.state, result))
 	})
 
-	scene.Audio().PlayMusic(assets.AudioMusic2)
+	scene.Audio().PlayMusic(music.AudioID)
 }
 
 func (c *BattleController) leaveScene(next ge.SceneController) {

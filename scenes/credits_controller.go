@@ -6,6 +6,7 @@ import (
 	"github.com/ebitenui/ebitenui/widget"
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/shmup-game/assets"
+	"github.com/quasilyte/shmup-game/controls"
 	"github.com/quasilyte/shmup-game/eui"
 	"github.com/quasilyte/shmup-game/session"
 )
@@ -55,7 +56,11 @@ func (c *CreditsController) Init(scene *ge.Scene) {
 	initUI(scene, root)
 }
 
-func (c *CreditsController) Update(delta float64) {}
+func (c *CreditsController) Update(delta float64) {
+	if c.state.Input.ActionIsJustReleased(controls.ActionMenuBack) {
+		c.back()
+	}
+}
 
 func (c *CreditsController) back() {
 	c.scene.Context().ChangeScene(NewMainMenuController(c.state))

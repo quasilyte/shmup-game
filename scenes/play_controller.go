@@ -4,7 +4,9 @@ import (
 	"github.com/ebitenui/ebitenui/widget"
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/shmup-game/assets"
+	"github.com/quasilyte/shmup-game/controls"
 	"github.com/quasilyte/shmup-game/eui"
+	"github.com/quasilyte/shmup-game/gamedata"
 	"github.com/quasilyte/shmup-game/session"
 	"github.com/quasilyte/shmup-game/styles"
 )
@@ -61,12 +63,12 @@ func (c *PlayController) Init(scene *ge.Scene) {
 	rowContainer.AddChild(eui.NewSelectButton(eui.SelectButtonConfig{
 		Resources: c.state.UIResources,
 		Input:     c.state.Input,
-		Value:     &c.state.Settings.Difficulty,
+		Value:     &c.state.Settings.SelectedMusic,
 		Label:     "Music Track",
 		ValueNames: []string{
-			"Leisurely Voice",
-			"Industrial",
-			"Playful",
+			gamedata.Music1.Name,
+			gamedata.Music2.Name,
+			gamedata.Music3.Name,
 		},
 	}))
 
@@ -103,7 +105,11 @@ func (c *PlayController) Init(scene *ge.Scene) {
 	initUI(scene, root)
 }
 
-func (c *PlayController) Update(delta float64) {}
+func (c *PlayController) Update(delta float64) {
+	if c.state.Input.ActionIsJustReleased(controls.ActionMenuBack) {
+		c.back()
+	}
+}
 
 func (c *PlayController) back() {
 	c.scene.Context().SaveGameData("save", c.state.Settings)

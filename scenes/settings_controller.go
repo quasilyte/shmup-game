@@ -78,7 +78,7 @@ func (c *settingsController) initUI(scene *ge.Scene) {
 }
 
 func (c *settingsController) Update(delta float64) {
-	if c.state.Input.ActionIsJustPressed(controls.ActionMenuBack) {
+	if c.state.Input.ActionIsJustReleased(controls.ActionMenuBack) {
 		c.leave()
 	}
 }

@@ -1,5 +1,10 @@
 package gamedata
 
+import (
+	resource "github.com/quasilyte/ebitengine-resource"
+	"github.com/quasilyte/shmup-game/assets"
+)
+
 type MusicChannelKind int
 
 const (
@@ -17,10 +22,20 @@ type MusicChannelVariant struct {
 }
 
 type MusicInfo struct {
+	Name     string
+	AudioID  resource.AudioID
 	Channels [][]MusicChannelVariant
 }
 
+var MusicList = []*MusicInfo{
+	Music1,
+	Music2,
+	Music3,
+}
+
 var Music1 = &MusicInfo{
+	Name:    "Leisurely Voice",
+	AudioID: assets.AudioMusic1,
 	Channels: [][]MusicChannelVariant{
 		0: {{ChannelPlayerAttack, 70, 2}, {ChannelPlayerAttack, 70, 3}},
 		1: {{ChannelPlayerAttack, 70, 2}, {ChannelPlayerAttack, 70, 3}},
@@ -36,6 +51,8 @@ var Music1 = &MusicInfo{
 }
 
 var Music2 = &MusicInfo{
+	Name:    "Industrial",
+	AudioID: assets.AudioMusic2,
 	Channels: [][]MusicChannelVariant{
 		0: {{ChannelEnemyAltAttack, 70, 6}, {ChannelEnemyAltAttack, 70, 1}, {ChannelEnemySpecialAttack, 70, 1}},
 		1: {{ChannelEnemyAltAttack, 70, 6}, {ChannelEnemyAltAttack, 70, 1}, {ChannelEnemySpecialAttack, 70, 1}},
@@ -50,6 +67,8 @@ var Music2 = &MusicInfo{
 }
 
 var Music3 = &MusicInfo{
+	Name:    "Playful",
+	AudioID: assets.AudioMusic3,
 	Channels: [][]MusicChannelVariant{
 		0: {{ChannelPlayerAttack, 68, 5}, {ChannelPlayerAttack, 50, 1}, {ChannelPlayerAttack, 50, 0}},
 

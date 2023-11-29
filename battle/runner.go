@@ -152,16 +152,16 @@ func (r *Runner) Init(scene *ge.Scene) {
 	switch r.session.Settings.Difficulty {
 	case 0: // Easy
 		r.state.botDamageMultiplier = 1.2
-		r.state.playerDamageMultiplier = 0.8
+		r.state.playerDamageMultiplier = 0.7
 	case 1: // Normal
 		r.state.botDamageMultiplier = 1.0
 		r.state.playerDamageMultiplier = 1.0
 	case 2: // Hard
 		r.state.botDamageMultiplier = 0.9
-		r.state.playerDamageMultiplier = 1.1
+		r.state.playerDamageMultiplier = 1.2
 	case 3: // Nightmare
 		r.state.botDamageMultiplier = 0.65
-		r.state.playerDamageMultiplier = 1.2
+		r.state.playerDamageMultiplier = 1.25
 	}
 }
 
