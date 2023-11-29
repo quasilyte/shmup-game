@@ -24,9 +24,8 @@ func NewBattleController(state *session.State) *BattleController {
 }
 
 func (c *BattleController) Init(scene *ge.Scene) {
-	scene.Audio().PauseCurrentMusic()
-
 	c.state.EventPlayerUpdate.Reset()
+	scene.Audio().PauseCurrentMusic()
 
 	c.scene = scene
 
@@ -49,13 +48,23 @@ func (c *BattleController) Init(scene *ge.Scene) {
 	c.runner = battle.NewRunner(battle.RunnerConfig{
 		Session:        c.state,
 		Stage:          stage,
-		Music:          gamedata.Music1,
+		Music:          gamedata.Music2,
 		SectorSize:     sectorSize,
 		SectorTextures: textures,
 	})
 	c.runner.Init(scene)
 
-	scene.Audio().PlayMusic(assets.AudioMusic1)
+	c.runner.EventBattleOver.Connect(nil, func(result battle.Result) {
+		c.leaveScene(NewResultsController(c.state, result))
+	})
+
+	scene.Audio().PlayMusic(assets.AudioMusic2)
+}
+
+func (c *BattleController) leaveScene(next ge.SceneController) {
+	c.scene.Audio().PauseCurrentMusic()
+	c.state.EventPlayerUpdate.Reset()
+	c.scene.Context().ChangeScene(next)
 }
 
 func (c *BattleController) Update(delta float64) {

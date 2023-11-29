@@ -24,3 +24,16 @@ func NewRowLayoutContainerWithMinWidth(minWidth, spacing int, rowscale []bool) *
 		)),
 	)
 }
+
+func NewGridContainer(columns int, opts ...widget.GridLayoutOpt) *widget.Container {
+	containerOpts := []widget.GridLayoutOpt{
+		widget.GridLayoutOpts.Columns(columns),
+	}
+	containerOpts = append(containerOpts, opts...)
+	return widget.NewContainer(
+		widget.ContainerOpts.WidgetOpts(widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
+			StretchHorizontal: true,
+			StretchVertical:   true,
+		})),
+		widget.ContainerOpts.Layout(widget.NewGridLayout(containerOpts...)))
+}

@@ -1,7 +1,6 @@
 package battle
 
 import (
-	"fmt"
 	"math"
 	"time"
 
@@ -10,6 +9,7 @@ import (
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/ge/xslices"
 	"github.com/quasilyte/gmath"
+	"github.com/quasilyte/gsignal"
 	"github.com/quasilyte/shmup-game/assets"
 	"github.com/quasilyte/shmup-game/gamedata"
 	"github.com/quasilyte/shmup-game/session"
@@ -18,6 +18,7 @@ import (
 )
 
 type Runner struct {
+	scene      *ge.Scene
 	session    *session.State
 	state      *battleState
 	eventQueue *queue[xm.StreamEvent]
@@ -25,12 +26,16 @@ type Runner struct {
 	t          float64
 	startTime  time.Time
 
+	transitionQueued bool
+
 	cam            *viewport.Camera
 	sectorSize     gmath.Vec
 	sectorTextures []*ebiten.Image
 	sectorSprites  []*ge.Sprite
 	currentSectors []int
 	tmpSlice       []int
+
+	EventBattleOver gsignal.Event[Result]
 }
 
 type RunnerConfig struct {
@@ -60,6 +65,7 @@ func NewRunner(config RunnerConfig) *Runner {
 func (r *Runner) Init(scene *ge.Scene) {
 	r.state.scene = scene
 	r.startTime = time.Now()
+	r.scene = scene
 
 	cam := viewport.NewCamera(r.state.stage, r.state.rect, 1920.0/2, 1080.0/2)
 	r.cam = cam
@@ -74,6 +80,9 @@ func (r *Runner) Init(scene *ge.Scene) {
 	})
 	vessel.pos = gmath.Vec{X: 0, Y: 0}
 	vessel.rotation = 3 * math.Pi / 2
+	vessel.EventDestroyed.Connect(nil, func(gsignal.Void) {
+		r.onBattleOver(false)
+	})
 	scene.AddObject(vessel)
 
 	overlay := scene.NewSprite(assets.ImageBattleOverlay)
@@ -98,6 +107,9 @@ func (r *Runner) Init(scene *ge.Scene) {
 		})
 		vessel.pos = gmath.Vec{X: -80, Y: -240}
 		vessel.rotation = math.Pi / 2
+		vessel.EventDestroyed.Connect(nil, func(gsignal.Void) {
+			r.onBattleOver(true)
+		})
 		scene.AddObject(vessel)
 
 		bot := newBoss1Player(r.state, vessel)
@@ -133,6 +145,20 @@ func (r *Runner) Init(scene *ge.Scene) {
 	r.updateSectors()
 }
 
+func (r *Runner) onBattleOver(victory bool) {
+	if r.transitionQueued {
+		return
+	}
+	r.transitionQueued = true
+
+	r.state.result.Victory = victory
+	r.state.result.TimePlayed = time.Since(r.startTime)
+
+	r.scene.DelayedCall(2, func() {
+		r.EventBattleOver.Emit(*r.state.result)
+	})
+}
+
 func (r *Runner) findChannelVariant(inst int, variants []gamedata.MusicChannelVariant) *gamedata.MusicChannelVariant {
 	for i, v := range variants {
 		if v.Inst == inst {
@@ -145,6 +171,11 @@ func (r *Runner) findChannelVariant(inst int, variants []gamedata.MusicChannelVa
 func (r *Runner) Update(delta float64) {
 	for r.eventQueue.Len() != 0 {
 		current := r.eventQueue.Peek()
+		if current.Kind == xm.EventSync && r.t == 0 {
+			r.t = current.SyncEventData()
+			r.eventQueue.Pop()
+			continue
+		}
 		if r.t < current.Time {
 			break
 		}
@@ -204,10 +235,6 @@ func (r *Runner) updateSectors() {
 	if xslices.Equal(r.tmpSlice, r.currentSectors) {
 		// Nothing to do.
 		return
-	}
-
-	if len(r.tmpSlice) > len(r.sectorSprites) {
-		fmt.Printf("%d,%d => %d,%d (%d)\n", startX, startY, endX, endY, len(r.tmpSlice))
 	}
 
 	// Update sector sprites.

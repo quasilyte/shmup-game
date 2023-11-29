@@ -32,6 +32,7 @@ func (p *humanPlayer) Init(scene *ge.Scene) {
 	p.pointerPos = gmath.Vec{X: 1920 / 4, Y: 1080 / 4}
 	p.pointer.Rotation = &p.pointerRotation
 	p.pointer.Pos.Base = &p.pointerPos
+	p.pointer.Visible = false
 	p.camera.UI.AddGraphicsAbove(p.pointer)
 
 	p.distLabel = ge.NewLabel(assets.BitmapFont1)
@@ -42,6 +43,7 @@ func (p *humanPlayer) Init(scene *ge.Scene) {
 	p.distLabel.AlignVertical = ge.AlignVerticalCenter
 	p.distLabel.Pos.Base = &p.distLabelPos
 	p.distLabel.Text = "???"
+	p.distLabel.Visible = false
 	p.camera.UI.AddGraphicsAbove(p.distLabel)
 
 	{
