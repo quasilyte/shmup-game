@@ -48,3 +48,16 @@ var Music2 = &MusicInfo{
 		9: {{ChannelPlayerAttack, 50, 2}, {ChannelPlayerAttack, 50, 3}},
 	},
 }
+
+var Music3 = &MusicInfo{
+	Channels: [][]MusicChannelVariant{
+		0: {{ChannelPlayerAttack, 68, 5}, {ChannelPlayerAttack, 50, 1}, {ChannelPlayerAttack, 50, 0}},
+
+		5: {{ChannelEnemyAltAttack, 70, 5}, {ChannelEnemyAltAttack, 70, 1}},
+		6: {{ChannelEnemyAltAttack, 70, 5}, {ChannelEnemyAltAttack, 70, 1}},
+
+		7: {{ChannelEnemySpecialAttack, 70, 3}, {ChannelEnemySpecialAttack, 70, 4}},
+		8: {{ChannelEnemyAttack, 70, 5}},
+		9: {{ChannelEnemyAttack, 70, 5}},
+	},
+}

@@ -91,7 +91,6 @@ func (v *vesselNode) Init(scene *ge.Scene) {
 }
 
 func (v *vesselNode) OnDamage(dmg gamedata.Damage) {
-	return
 	if v.disposed {
 		return
 	}

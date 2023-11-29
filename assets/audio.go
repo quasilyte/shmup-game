@@ -37,7 +37,7 @@ func registerAudioResources(ctx *ge.Context, config Config) {
 	audioResources := map[resource.AudioID]resource.AudioInfo{
 		AudioMusic1: {Path: "music/drozerix-leisurely_voice.xm", Group: SoundGroupMusic},
 		AudioMusic2: {Path: "music/drozerix-porn_industry.xm", Group: SoundGroupMusic},
-		// AudioMusic2: {Path: "music/drozerix-porn_industry.xm", Group: SoundGroupMusic},
+		AudioMusic3: {Path: "music/drozerix-playful_girl.xm", Group: SoundGroupMusic},
 
 		AudioLaser1Impact: {Path: "sfx/laser1_impact.wav"},
 	}
@@ -85,4 +85,5 @@ const (
 
 	AudioMusic1
 	AudioMusic2
+	AudioMusic3
 )
