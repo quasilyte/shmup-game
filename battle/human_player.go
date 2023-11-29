@@ -9,6 +9,7 @@ import (
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/shmup-game/assets"
 	"github.com/quasilyte/shmup-game/controls"
+	"github.com/quasilyte/shmup-game/gamedata"
 	"github.com/quasilyte/shmup-game/viewport"
 )
 
@@ -72,6 +73,10 @@ func (p *humanPlayer) Update(delta float64) {
 	p.vessel.orders.strafe = p.input.ActionIsPressed(controls.ActionStrafe)
 	p.vessel.orders.specialFire = p.input.ActionIsJustPressed(controls.ActionSpecial)
 
+	if p.world.difficulty == 0 {
+		p.vessel.hp = gmath.ClampMax(p.vessel.hp+delta, p.vessel.design.HP)
+	}
+
 	p.updateCamera(delta)
 }
 
@@ -103,6 +108,16 @@ func (p *humanPlayer) updateCamera(delta float64) {
 			} else {
 				p.distLabel.SetColorScaleRGBA(255, 100, 100, 255)
 				p.world.result.PressurePenalty += 0.1
+			}
+			switch p.world.difficulty {
+			case 2: // hard (take damage in red zone)
+				if displayDist > 200 {
+					p.vessel.OnDamage(gamedata.Damage{HP: 0.1})
+				}
+			case 3: // nightmare (take damage in yellow zone)
+				if displayDist > 100 {
+					p.vessel.OnDamage(gamedata.Damage{HP: 0.15})
+				}
 			}
 			p.pointer.Visible = true
 			p.distLabel.Visible = true

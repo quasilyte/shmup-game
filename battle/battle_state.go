@@ -7,12 +7,13 @@ import (
 )
 
 type battleState struct {
-	scene  *ge.Scene
-	stage  *viewport.Stage
-	rect   gmath.Rect
-	human  *humanPlayer
-	bot    botPlayer
-	result *Result
+	difficulty int
+	scene      *ge.Scene
+	stage      *viewport.Stage
+	rect       gmath.Rect
+	human      *humanPlayer
+	bot        botPlayer
+	result     *Result
 
 	playerDamageMultiplier float64
 	botDamageMultiplier    float64

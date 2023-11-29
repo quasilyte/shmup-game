@@ -50,8 +50,9 @@ func NewRunner(config RunnerConfig) *Runner {
 	return &Runner{
 		session: config.Session,
 		state: &battleState{
-			stage:  config.Stage,
-			result: &Result{},
+			difficulty: config.Session.Settings.Difficulty,
+			stage:      config.Stage,
+			result:     &Result{},
 		},
 		eventQueue:     newQueue[xm.StreamEvent](320),
 		music:          config.Music,
