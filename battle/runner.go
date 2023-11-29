@@ -76,15 +76,20 @@ func (r *Runner) Init(scene *ge.Scene) {
 		gamedata.PulseLaserWeapon,
 		gamedata.RearCannonWeapon,
 	}
+	playerSpecialWeapons := [...]*gamedata.SpecialWeaponDesign{
+		gamedata.DashSpecialWeapon,
+		gamedata.MegaBombSpecialWeapon,
+	}
 	playerVessels := [...]*gamedata.VesselDesign{
 		gamedata.InterceptorDesign1,
 		gamedata.InterceptorDesign2,
 	}
 
 	vessel := newVesselNode(vesselConfig{
-		world:  r.state,
-		design: playerVessels[r.session.Settings.Vessel],
-		weapon: playerWeapons[r.session.Settings.Weapon],
+		world:         r.state,
+		design:        playerVessels[r.session.Settings.Vessel],
+		weapon:        playerWeapons[r.session.Settings.Weapon],
+		specialWeapon: playerSpecialWeapons[r.session.Settings.Special],
 	})
 	vessel.pos = gmath.Vec{X: 0, Y: 0}
 	vessel.rotation = 3 * math.Pi / 2

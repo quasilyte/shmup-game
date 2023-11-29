@@ -4,6 +4,7 @@ import (
 	"math"
 
 	"github.com/quasilyte/gmath"
+	"github.com/quasilyte/shmup-game/assets"
 	"github.com/quasilyte/shmup-game/gamedata"
 )
 
@@ -46,6 +47,13 @@ func (w *weaponSystem) createSimpleProjectile(charge float32, rotation gmath.Rad
 func (w *weaponSystem) Special(charge float32) {
 	v := w.vessel
 
+	if w.special.EnergyCost > 0 {
+		if v.energy < w.special.EnergyCost {
+			return
+		}
+		v.energy -= w.special.EnergyCost
+	}
+
 	switch w.special {
 	case gamedata.HomingMissileSpecialWeapon:
 		offset := homingMissileOffsets[w.specialCounter%3]
@@ -58,7 +66,21 @@ func (w *weaponSystem) Special(charge float32) {
 			targetPos: v.pos.MoveInDirection(w.special.Base.AttackRange, v.rotation),
 			charge:    charge,
 		})
-		v.world.scene.AddObject(missile)
+		v.scene.AddObject(missile)
+
+	case gamedata.MegaBombSpecialWeapon:
+		v.scene.AddObject(w.createSimpleProjectile(1, v.rotation, w.special.Base))
+
+	case gamedata.DashSpecialWeapon:
+		v.velocity = v.velocity.Add(gmath.RadToVec(v.rotation - math.Pi).Mulf(200)).ClampLen(v.maxSpeed())
+		v.scene.AddObject(newEffectNode(effectConfig{
+			world:    v.world,
+			pos:      v.pos.MoveInDirection(-20, v.rotation+math.Pi),
+			layer:    slightlyAboveEffectLayer,
+			speed:    veryFastEffectSpeed,
+			image:    assets.ImageDashEffect,
+			rotation: v.rotation + math.Pi/2,
+		}))
 	}
 
 	w.specialCounter++

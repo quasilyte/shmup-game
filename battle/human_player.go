@@ -23,10 +23,11 @@ type humanPlayer struct {
 	pointer         *ge.Sprite
 	distLabelPos    gmath.Vec
 	distLabel       *ge.Label
+	energyRegen     float64
 }
 
 func (p *humanPlayer) Init(scene *ge.Scene) {
-	p.updateCamera()
+	p.updateCamera(0)
 
 	p.pointer = scene.NewSprite(assets.ImageTargetPointer)
 	p.pointerPos = gmath.Vec{X: 1920 / 4, Y: 1080 / 4}
@@ -56,6 +57,8 @@ func (p *humanPlayer) Init(scene *ge.Scene) {
 		energyBar := newValueBar(p.camera, pos, &p.vessel.energy, p.vessel.design.Energy, false)
 		scene.AddObject(energyBar)
 	}
+
+	p.energyRegen = p.vessel.design.Energy * 0.05
 }
 
 func (p *humanPlayer) IsDisposed() bool {
@@ -67,15 +70,16 @@ func (p *humanPlayer) Update(delta float64) {
 	p.vessel.orders.rotateRight = p.input.ActionIsPressed(controls.ActionRotateRight)
 	p.vessel.orders.turbo = p.input.ActionIsPressed(controls.ActionMoveTurbo)
 	p.vessel.orders.strafe = p.input.ActionIsPressed(controls.ActionStrafe)
+	p.vessel.orders.specialFire = p.input.ActionIsJustPressed(controls.ActionSpecial)
 
-	p.updateCamera()
+	p.updateCamera(delta)
 }
 
 func (p *humanPlayer) CameraPos() gmath.Vec {
 	return p.vessel.pos.MoveInDirection(164, p.vessel.rotation)
 }
 
-func (p *humanPlayer) updateCamera() {
+func (p *humanPlayer) updateCamera(delta float64) {
 	p.camera.Rotation = -math.Pi/2 - p.vessel.rotation.Normalized()
 
 	p.camera.Offset = p.CameraPos().Sub(gmath.Vec{
@@ -105,6 +109,7 @@ func (p *humanPlayer) updateCamera() {
 		} else {
 			p.pointer.Visible = false
 			p.distLabel.Visible = false
+			p.vessel.energy = gmath.ClampMax(p.vessel.energy+(p.energyRegen*delta), p.vessel.design.Energy)
 		}
 	}
 

@@ -45,6 +45,7 @@ func main() {
 	}
 
 	keymap := input.Keymap{
+		controls.ActionSpecial:     {input.KeyDown, input.KeyS, input.KeySpace},
 		controls.ActionMoveTurbo:   {input.KeyUp, input.KeyW, input.KeyGamepadUp},
 		controls.ActionRotateLeft:  {input.KeyLeft, input.KeyA, input.KeyGamepadLeft},
 		controls.ActionRotateRight: {input.KeyRight, input.KeyD, input.KeyGamepadRight},
