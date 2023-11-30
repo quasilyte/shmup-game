@@ -116,10 +116,12 @@ func (r *Runner) Init(scene *ge.Scene) {
 
 	{
 		vessel := newVesselNode(vesselConfig{
-			world:         r.state,
-			design:        gamedata.BossVessel2,
-			weapon:        gamedata.SpinCannonWeapon,
-			specialWeapon: gamedata.HomingMissileSpecialWeapon,
+			world:  r.state,
+			design: gamedata.BossVessel2,
+			// weapon:        gamedata.SpinCannonWeapon,
+			weapon: gamedata.PhotonCannonWeapon,
+			// specialWeapon: gamedata.HomingMissileSpecialWeapon,
+			specialWeapon: gamedata.MineSpecialWeapon,
 		})
 		vessel.pos = gmath.Vec{X: -80, Y: -240}
 		vessel.rotation = math.Pi / 2

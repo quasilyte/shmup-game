@@ -93,5 +93,26 @@ var SpinCannonWeapon = &WeaponDesign{
 	ProjectileSpawnEffect: assets.ImageSpinCannonSpawn,
 	ProjectileRotateSpeed: 26,
 	CollisionRange:        4,
-	// ImpactSound:         assets.AudioLaser1Impact,
+}
+
+var PhotonCannonWeapon = &WeaponDesign{
+	Damage:                Damage{HP: 8},
+	AttackRange:           300,
+	ProjectileSpeed:       350,
+	ExplosionRange:        10,
+	ProjectileImage:       assets.ImagePhotonCannonProjectile,
+	ProjectileExplosion:   assets.ImagePhotonCannonExplosion,
+	ProjectileSpawnEffect: assets.ImagePhotonCannonExplosion,
+	CollisionRange:        2,
+}
+
+var DirectPhotonCannonWeapon = &WeaponDesign{
+	Damage:                Damage{HP: 10},
+	AttackRange:           450,
+	ProjectileSpeed:       200,
+	ExplosionRange:        10,
+	ProjectileImage:       assets.ImagePhotonCannonProjectile,
+	ProjectileExplosion:   assets.ImagePhotonCannonExplosion,
+	ProjectileSpawnEffect: assets.ImagePhotonCannonExplosion,
+	CollisionRange:        2,
 }

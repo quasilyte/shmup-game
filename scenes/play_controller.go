@@ -20,6 +20,8 @@ func NewPlayController(state *session.State) *PlayController {
 }
 
 func (c *PlayController) Init(scene *ge.Scene) {
+	scene.Audio().ContinueMusic(assets.AudioMusicMenu)
+
 	c.scene = scene
 
 	root := widget.NewContainer(

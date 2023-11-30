@@ -71,6 +71,19 @@ func (w *weaponSystem) Special(charge float32) {
 		})
 		v.scene.AddObject(missile)
 
+	case gamedata.MineSpecialWeapon:
+		mineRotation := fireRotation + math.Pi + gmath.Rad(v.scene.Rand().FloatRange(-0.4, 0.4))
+		firePos := v.pos.MoveInDirection(20, mineRotation)
+		mine := newProjectileNode(projectileConfig{
+			target:    v.enemy,
+			world:     v.world,
+			weapon:    w.special.Base,
+			pos:       firePos,
+			targetPos: v.pos.MoveInDirection(w.special.Base.AttackRange, mineRotation),
+			charge:    charge,
+		})
+		v.scene.AddObject(mine)
+
 	case gamedata.MegaBombSpecialWeapon:
 		v.scene.AddObject(w.createSimpleProjectile(1, fireRotation, w.special.Base))
 
@@ -101,6 +114,17 @@ func (w *weaponSystem) Attack(charge float32) {
 	case gamedata.SpinCannonWeapon:
 		rotation := fireRotation + gmath.Rad(float64(w.attackCounter)*math.Pi/12)
 		v.world.scene.AddObject(w.createSimpleProjectile(charge, rotation, w.design))
+
+	case gamedata.PhotonCannonWeapon:
+		counter := w.attackCounter % 16
+		{
+			rotation := fireRotation + math.Pi/2 - gmath.Rad(float64(counter/2)*math.Pi/16)
+			v.world.scene.AddObject(w.createSimpleProjectile(charge, rotation, w.design))
+		}
+		{
+			rotation := fireRotation - math.Pi/2 + gmath.Rad(float64(counter/2)*math.Pi/16)
+			v.world.scene.AddObject(w.createSimpleProjectile(charge, rotation, w.design))
+		}
 
 	case gamedata.IonCannonWeapon:
 		v.world.scene.AddObject(w.createSimpleProjectile(charge, fireRotation, w.design))
@@ -188,6 +212,29 @@ func (w *weaponSystem) AltAttack(charge float32) {
 			weapon:    w.design,
 			pos:       v.pos.MoveInDirection(60, rotation),
 			targetPos: v.pos.MoveInDirection(w.design.AttackRange, fireRotation),
+			charge:    charge,
+		}))
+
+	case gamedata.PhotonCannonWeapon:
+		var rotation gmath.Rad
+		var rotationDelta gmath.Rad
+		switch w.altAttackCounter % 4 {
+		case 0:
+			rotationDelta = 0.35
+		case 1:
+			rotationDelta = 0.55
+		case 2:
+			rotationDelta = -0.35
+		case 3:
+			rotationDelta = -0.55
+		}
+		rotation = v.pos.AngleToPoint(v.enemy.pos) + rotationDelta
+		v.world.scene.AddObject(newProjectileNode(projectileConfig{
+			target:    v.enemy,
+			world:     v.world,
+			weapon:    gamedata.DirectPhotonCannonWeapon,
+			pos:       v.pos.MoveInDirection(30, rotation),
+			targetPos: v.pos.MoveInDirection(gamedata.DirectPhotonCannonWeapon.AttackRange, rotation),
 			charge:    charge,
 		}))
 

@@ -21,8 +21,10 @@ func registerImageResources(ctx *ge.Context) {
 		ImageTwinCannonProjectile:      {Path: "image/projectile/twin_cannon.png"},
 		ImageTwinCannonSmallProjectile: {Path: "image/projectile/twin_cannon_small.png"},
 		ImageSpinCannonProjectile:      {Path: "image/projectile/spin_cannon.png"},
+		ImagePhotonCannonProjectile:    {Path: "image/projectile/photon_cannon.png"},
 		ImageHomingMissile:             {Path: "image/projectile/homing_missile.png"},
 		ImageMegaBomb:                  {Path: "image/projectile/mega_bomb.png"},
+		ImageMine:                      {Path: "image/projectile/mine.png"},
 
 		ImageLaserExplosion1:          {Path: "image/effect/laser1_impact.png", FrameWidth: 11},
 		ImageLaserExplosion2:          {Path: "image/effect/laser2_impact.png", FrameWidth: 10},
@@ -31,12 +33,14 @@ func registerImageResources(ctx *ge.Context) {
 		ImageTwinCannonSmallExplosion: {Path: "image/effect/twin_cannon_impact_small.png", FrameWidth: 24},
 		ImageSpinCannonExplosion:      {Path: "image/effect/spin_cannon_impact.png", FrameWidth: 26},
 		ImageSpinCannonSpawn:          {Path: "image/effect/spin_cannon_spawn.png", FrameWidth: 24},
+		ImagePhotonCannonExplosion:    {Path: "image/effect/photon_cannon_impact.png", FrameWidth: 15},
 		ImageMissileExplosion:         {Path: "image/effect/missile_impact.png", FrameWidth: 24},
 		ImageMissileSpawn:             {Path: "image/effect/missile_spawn.png", FrameWidth: 15},
 		ImageExplosionSmoke:           {Path: "image/effect/explosion_smoke.png", FrameWidth: 32},
 		ImageFireExplosion:            {Path: "image/effect/fire_explosion.png", FrameWidth: 32},
 		ImageMegaBombImpact:           {Path: "image/effect/mega_bomb_impact.png", FrameWidth: 32},
 		ImageTrailEffect:              {Path: "image/effect/trail.png", FrameWidth: 10},
+		ImageMineSpawn:                {Path: "image/effect/mine_spawn.png", FrameWidth: 24},
 
 		ImageDashEffect: {Path: "image/effect/dash.png", FrameWidth: 30},
 
@@ -80,8 +84,10 @@ const (
 	ImageTwinCannonProjectile
 	ImageTwinCannonSmallProjectile
 	ImageSpinCannonProjectile
+	ImagePhotonCannonProjectile
 	ImageHomingMissile
 	ImageMegaBomb
+	ImageMine
 
 	ImageLaserExplosion1
 	ImageLaserExplosion2
@@ -90,12 +96,14 @@ const (
 	ImageTwinCannonSmallExplosion
 	ImageSpinCannonExplosion
 	ImageSpinCannonSpawn
+	ImagePhotonCannonExplosion
 	ImageMissileExplosion
 	ImageMissileSpawn
 	ImageExplosionSmoke
 	ImageFireExplosion
 	ImageMegaBombImpact
 	ImageTrailEffect
+	ImageMineSpawn
 
 	ImageDashEffect
 

@@ -99,14 +99,35 @@ func (p *projectileNode) Dispose() {
 }
 
 func (p *projectileNode) Detonate(collided bool) {
-	effect := newEffectNode(effectConfig{
-		world: p.world,
-		pos:   p.pos,
-		layer: aboveEffectLayer,
-		image: p.weapon.ProjectileExplosion,
-	})
-	effect.colorScale = p.sprite.GetColorScale()
-	p.scene.AddObject(effect)
+	if p.weapon == gamedata.MineSpecialWeapon.Base {
+		for i := 0; i < 3; i++ {
+			p.scene.AddObject(newEffectNode(effectConfig{
+				world:    p.world,
+				pos:      p.pos.Add(p.scene.Rand().Offset(-10, 10)),
+				layer:    slightlyAboveEffectLayer,
+				speed:    fastEffectSpeed,
+				image:    assets.ImageExplosionSmoke,
+				rotation: p.scene.Rand().Rad(),
+			}))
+		}
+		p.scene.AddObject(newEffectNode(effectConfig{
+			world:    p.world,
+			pos:      p.pos.Add(p.scene.Rand().Offset(-2, 2)),
+			layer:    slightlyAboveEffectLayer,
+			speed:    normalEffectSpeed,
+			image:    assets.ImageFireExplosion,
+			rotation: p.scene.Rand().Rad(),
+		}))
+	} else {
+		effect := newEffectNode(effectConfig{
+			world: p.world,
+			pos:   p.pos,
+			layer: aboveEffectLayer,
+			image: p.weapon.ProjectileExplosion,
+		})
+		effect.colorScale = p.sprite.GetColorScale()
+		p.scene.AddObject(effect)
+	}
 
 	if collided || (p.toPos.DistanceTo(p.target.pos) < p.weapon.ExplosionRange+p.target.design.Size) {
 		p.target.OnDamage(p.weapon.Damage)

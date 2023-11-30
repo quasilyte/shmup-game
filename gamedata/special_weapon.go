@@ -45,3 +45,17 @@ var HomingMissileSpecialWeapon = &SpecialWeaponDesign{
 		IgnoreChargeColor:     true,
 	},
 }
+
+var MineSpecialWeapon = &SpecialWeaponDesign{
+	Base: &WeaponDesign{
+		Damage:                Damage{HP: 30},
+		AttackRange:           300,
+		ProjectileSpeed:       20,
+		ExplosionRange:        6,
+		ProjectileImage:       assets.ImageMine,
+		ProjectileSpawnEffect: assets.ImageMineSpawn,
+		CollisionRange:        5,
+		ProjectileRotateSpeed: 1,
+		IgnoreChargeColor:     true,
+	},
+}
