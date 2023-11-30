@@ -117,7 +117,7 @@ func (r *Runner) Init(scene *ge.Scene) {
 	{
 		vessel := newVesselNode(vesselConfig{
 			world:         r.state,
-			design:        gamedata.BossVessel1,
+			design:        gamedata.BossVessel2,
 			weapon:        gamedata.SpinCannonWeapon,
 			specialWeapon: gamedata.HomingMissileSpecialWeapon,
 		})

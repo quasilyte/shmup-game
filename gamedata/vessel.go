@@ -49,11 +49,23 @@ var InterceptorDesign2 = &VesselDesign{
 var BossVessel1 = &VesselDesign{
 	Image: assets.ImageBoss1,
 
-	HP:   500,
+	HP:   450,
 	Size: 26,
 
-	Acceleration:     100,
-	Speed:            120,
-	StrafeSpeed:      120,
+	Acceleration:     120,
+	Speed:            150,
+	StrafeSpeed:      140,
 	RotationMaxSpeed: 2.5,
+}
+
+var BossVessel2 = &VesselDesign{
+	Image: assets.ImageBoss2,
+
+	HP:   600,
+	Size: 32,
+
+	Acceleration:     140,
+	Speed:            120,
+	StrafeSpeed:      200,
+	RotationMaxSpeed: 3.0,
 }

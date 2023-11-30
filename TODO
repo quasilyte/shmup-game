@@ -1,6 +1,2 @@
-content:
-* at least 2 player vessel types
-* at least 2 enemy types
-
-ux:
-* crosshair for the weapon
+* different on-hit sound effects for player weapons
+* implement a second boss

@@ -10,6 +10,7 @@ import (
 func registerImageResources(ctx *ge.Context) {
 	imageResources := map[resource.ImageID]resource.ImageInfo{
 		ImageBoss1: {Path: "image/vessel/boss1.png", FrameWidth: 64},
+		ImageBoss2: {Path: "image/vessel/boss2.png", FrameWidth: 64},
 
 		ImageInterceptor1: {Path: "image/vessel/interceptor1.png", FrameWidth: 64},
 		ImageInterceptor2: {Path: "image/vessel/interceptor2.png", FrameWidth: 64},
@@ -71,6 +72,7 @@ const (
 	ImageInterceptor2
 
 	ImageBoss1
+	ImageBoss2
 
 	ImageLaserProjectile1
 	ImageLaserProjectile2
