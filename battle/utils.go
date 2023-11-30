@@ -56,3 +56,12 @@ func playSound(world *battleState, pos gmath.Vec, id resource.AudioID) {
 		world.scene.Audio().PlaySound(sound)
 	}
 }
+
+func isCloserToDestination(v1, v2 gmath.Vec, theta gmath.Rad) bool {
+	destination := gmath.RadToVec(theta)
+
+	dot1 := v1.Dot(destination)
+	dot2 := v2.Dot(destination)
+
+	return dot2 < dot1
+}

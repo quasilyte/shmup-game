@@ -230,7 +230,10 @@ func (v *vesselNode) Update(delta float64) {
 		if orders.strafe {
 			v.strafing = true
 			if !wasStrafing {
-				v.velocity = v.velocity.Add(gmath.RadToVec(v.rotation - math.Pi/2).Mulf(50 * v.strafeSpeed() * delta)).ClampLen(0.6 * v.strafeSpeed())
+				boostedVelocity := v.velocity.Add(gmath.RadToVec(v.rotation - math.Pi/2).Mulf(50 * v.strafeSpeed() * delta)).ClampLen(0.6 * v.strafeSpeed())
+				if isCloserToDestination(boostedVelocity, v.velocity, v.rotation-math.Pi/2) {
+					v.velocity = boostedVelocity
+				}
 				v.scene.AddObject(newEffectNode(effectConfig{
 					world:    v.world,
 					pos:      v.pos.MoveInDirection(20, v.rotation+math.Pi-0.5),
@@ -254,7 +257,10 @@ func (v *vesselNode) Update(delta float64) {
 		if orders.strafe {
 			v.strafing = true
 			if !wasStrafing {
-				v.velocity = v.velocity.Add(gmath.RadToVec(v.rotation + math.Pi/2).Mulf(50 * v.strafeSpeed() * delta)).ClampLen(0.6 * v.strafeSpeed())
+				boostedVelocity := v.velocity.Add(gmath.RadToVec(v.rotation + math.Pi/2).Mulf(50 * v.strafeSpeed() * delta)).ClampLen(0.6 * v.strafeSpeed())
+				if isCloserToDestination(boostedVelocity, v.velocity, v.rotation+math.Pi/2) {
+					v.velocity = boostedVelocity
+				}
 				v.scene.AddObject(newEffectNode(effectConfig{
 					world:    v.world,
 					pos:      v.pos.MoveInDirection(20, v.rotation-math.Pi+0.5),
@@ -279,7 +285,10 @@ func (v *vesselNode) Update(delta float64) {
 	if orders.turbo {
 		v.thrusting = true
 		if !wasThrusting {
-			v.velocity = v.velocity.Add(gmath.RadToVec(v.rotation).Mulf(25 * accel * delta)).ClampLen(0.5 * v.maxSpeed())
+			boostedVelocity := v.velocity.Add(gmath.RadToVec(v.rotation).Mulf(25 * accel * delta)).ClampLen(0.5 * v.maxSpeed())
+			if isCloserToDestination(boostedVelocity, v.velocity, v.rotation) {
+				v.velocity = boostedVelocity
+			}
 			v.scene.AddObject(newEffectNode(effectConfig{
 				world:    v.world,
 				pos:      v.pos.MoveInDirection(20, v.rotation-math.Pi),

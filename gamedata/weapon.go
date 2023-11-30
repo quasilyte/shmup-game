@@ -60,7 +60,7 @@ var RearCannonWeapon = &WeaponDesign{
 }
 
 var TwinCannonWeapon = &WeaponDesign{
-	Damage:                Damage{HP: 14},
+	Damage:                Damage{HP: 15},
 	AttackRange:           250,
 	ProjectileSpeed:       900,
 	ExplosionRange:        8,
