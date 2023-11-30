@@ -77,6 +77,7 @@ func (c *PlayController) Init(scene *ge.Scene) {
 		ValueNames: []string{
 			"Dash",
 			"Mega Bomb",
+			"Spin Shield",
 		},
 	}))
 

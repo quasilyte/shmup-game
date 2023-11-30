@@ -81,6 +81,7 @@ func (r *Runner) Init(scene *ge.Scene) {
 	playerSpecialWeapons := [...]*gamedata.SpecialWeaponDesign{
 		gamedata.DashSpecialWeapon,
 		gamedata.MegaBombSpecialWeapon,
+		gamedata.SpinningShieldSpecialWeapon,
 	}
 	playerVessels := [...]*gamedata.VesselDesign{
 		gamedata.InterceptorDesign1,
@@ -168,10 +169,10 @@ func (r *Runner) Init(scene *ge.Scene) {
 		r.state.botDamageMultiplier = 1.0
 		r.state.playerDamageMultiplier = 1.0
 	case 2: // Hard
-		r.state.botDamageMultiplier = 0.9
+		r.state.botDamageMultiplier = 0.85
 		r.state.playerDamageMultiplier = 1.2
 	case 3: // Nightmare
-		r.state.botDamageMultiplier = 0.65
+		r.state.botDamageMultiplier = 0.6
 		r.state.playerDamageMultiplier = 1.25
 	}
 }

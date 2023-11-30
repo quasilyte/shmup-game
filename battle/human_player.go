@@ -56,6 +56,7 @@ func (p *humanPlayer) Init(scene *ge.Scene) {
 	{
 		pos := gmath.Vec{X: 182 + 486, Y: 49}
 		energyBar := newValueBar(p.camera, pos, &p.vessel.energy, p.vessel.design.Energy, false)
+		energyBar.threshold = p.vessel.weapon.special.EnergyCost
 		scene.AddObject(energyBar)
 	}
 

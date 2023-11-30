@@ -14,8 +14,9 @@ type valueBar struct {
 
 	pos gmath.Vec
 
-	value    *float64
-	maxValue float64
+	value     *float64
+	maxValue  float64
+	threshold float64
 
 	isHP bool
 }
@@ -48,7 +49,13 @@ func (b *valueBar) Init(scene *ge.Scene) {
 func (b *valueBar) IsDisposed() bool { return false }
 
 func (b *valueBar) updateFrame() {
-	percent := *b.value / b.maxValue
+	v := *b.value
+	if v < b.threshold {
+		b.sprite.SetAlpha(0.2)
+	} else {
+		b.sprite.SetAlpha(1)
+	}
+	percent := v / b.maxValue
 	if percent >= 0.99 {
 		b.sprite.FrameTrimBottom = 0
 		return

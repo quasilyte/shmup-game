@@ -96,19 +96,19 @@ func (c *ResultsController) calcRank(score int) string {
 	}
 
 	switch {
-	case score >= 1800:
+	case score >= 1600:
 		return "S+"
-	case score >= 1400:
+	case score >= 1300:
 		return "S"
-	case score >= 1200:
+	case score >= 1100:
 		return "A"
-	case score >= 1000:
+	case score >= 950:
 		return "B"
-	case score >= 600:
+	case score >= 800:
 		return "C"
-	case score >= 300:
+	case score >= 600:
 		return "D"
-	case score >= 100:
+	case score >= 400:
 		return "E"
 	default:
 		return "F"
@@ -131,7 +131,17 @@ func (c *ResultsController) calcScore() int {
 	// nightmare: 140%
 	difficultyMultiplier := 0.8 + (0.2 * float64(c.result.Difficulty))
 
-	badTimeSec := 8.0 * 60.0
+	var badTimeSec float64
+	switch c.result.Difficulty {
+	case 0:
+		badTimeSec = 4.25 * 60.0
+	case 1:
+		badTimeSec = 4.5 * 60.0
+	case 2:
+		badTimeSec = 5.0 * 60.0
+	case 3:
+		badTimeSec = 6.0 * 60.0
+	}
 	timeSec := c.result.TimePlayed.Seconds()
 	timeMultiplier := gmath.ClampMin(1.0-(timeSec*(1/badTimeSec)), 0.0001)
 

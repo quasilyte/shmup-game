@@ -48,6 +48,8 @@ func (w *weaponSystem) createSimpleProjectile(charge float32, rotation gmath.Rad
 func (w *weaponSystem) Special(charge float32) {
 	v := w.vessel
 
+	fireRotation := v.getFireRotation()
+
 	if w.special.EnergyCost > 0 {
 		if v.energy < w.special.EnergyCost {
 			return
@@ -58,29 +60,32 @@ func (w *weaponSystem) Special(charge float32) {
 	switch w.special {
 	case gamedata.HomingMissileSpecialWeapon:
 		offset := homingMissileOffsets[w.specialCounter%3]
-		firePos := v.pos.MoveInDirection(30, v.rotation).Add(offset.Rotated(v.rotation))
+		firePos := v.pos.MoveInDirection(30, fireRotation).Add(offset.Rotated(fireRotation))
 		missile := newProjectileNode(projectileConfig{
 			target:    v.enemy,
 			world:     v.world,
 			weapon:    w.special.Base,
 			pos:       firePos,
-			targetPos: v.pos.MoveInDirection(w.special.Base.AttackRange, v.rotation),
+			targetPos: v.pos.MoveInDirection(w.special.Base.AttackRange, fireRotation),
 			charge:    charge,
 		})
 		v.scene.AddObject(missile)
 
 	case gamedata.MegaBombSpecialWeapon:
-		v.scene.AddObject(w.createSimpleProjectile(1, v.rotation, w.special.Base))
+		v.scene.AddObject(w.createSimpleProjectile(1, fireRotation, w.special.Base))
+
+	case gamedata.SpinningShieldSpecialWeapon:
+		v.startSpinning(1)
 
 	case gamedata.DashSpecialWeapon:
-		v.velocity = v.velocity.Add(gmath.RadToVec(v.rotation - math.Pi).Mulf(200)).ClampLen(v.maxSpeed())
+		v.velocity = v.velocity.Add(gmath.RadToVec(fireRotation - math.Pi).Mulf(200)).ClampLen(v.maxSpeed())
 		v.scene.AddObject(newEffectNode(effectConfig{
 			world:    v.world,
-			pos:      v.pos.MoveInDirection(-20, v.rotation+math.Pi),
+			pos:      v.pos.MoveInDirection(-20, fireRotation+math.Pi),
 			layer:    slightlyAboveEffectLayer,
 			speed:    veryFastEffectSpeed,
 			image:    assets.ImageDashEffect,
-			rotation: v.rotation + math.Pi/2,
+			rotation: fireRotation + math.Pi/2,
 		}))
 	}
 
@@ -90,46 +95,48 @@ func (w *weaponSystem) Special(charge float32) {
 func (w *weaponSystem) Attack(charge float32) {
 	v := w.vessel
 
+	fireRotation := v.getFireRotation()
+
 	switch w.design {
 	case gamedata.SpinCannonWeapon:
-		rotation := v.rotation + gmath.Rad(float64(w.attackCounter)*math.Pi/12)
+		rotation := fireRotation + gmath.Rad(float64(w.attackCounter)*math.Pi/12)
 		v.world.scene.AddObject(w.createSimpleProjectile(charge, rotation, w.design))
 
 	case gamedata.IonCannonWeapon:
-		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation, w.design))
-		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation+0.3, w.design))
-		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation-0.3, w.design))
+		v.world.scene.AddObject(w.createSimpleProjectile(charge, fireRotation, w.design))
+		v.world.scene.AddObject(w.createSimpleProjectile(charge, fireRotation+0.3, w.design))
+		v.world.scene.AddObject(w.createSimpleProjectile(charge, fireRotation-0.3, w.design))
 
 	case gamedata.PulseLaserWeapon:
-		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation, w.design))
+		v.world.scene.AddObject(w.createSimpleProjectile(charge, fireRotation, w.design))
 
 	case gamedata.RearCannonWeapon:
-		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation+math.Pi/2, w.design))
-		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation+0.3+math.Pi/2, w.design))
-		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation-0.3+math.Pi/2, w.design))
-		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation-math.Pi/2, w.design))
-		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation+0.3-math.Pi/2, w.design))
-		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation-0.3-math.Pi/2, w.design))
+		v.world.scene.AddObject(w.createSimpleProjectile(charge, fireRotation+math.Pi/2, w.design))
+		v.world.scene.AddObject(w.createSimpleProjectile(charge, fireRotation+0.3+math.Pi/2, w.design))
+		v.world.scene.AddObject(w.createSimpleProjectile(charge, fireRotation-0.3+math.Pi/2, w.design))
+		v.world.scene.AddObject(w.createSimpleProjectile(charge, fireRotation-math.Pi/2, w.design))
+		v.world.scene.AddObject(w.createSimpleProjectile(charge, fireRotation+0.3-math.Pi/2, w.design))
+		v.world.scene.AddObject(w.createSimpleProjectile(charge, fireRotation-0.3-math.Pi/2, w.design))
 
 	case gamedata.TwinCannonWeapon:
 		if w.primaryCounter%24 > 11 {
-			firePos := v.pos.MoveInDirection(10, v.rotation).Add((gmath.Vec{Y: 38}).Rotated(v.rotation))
+			firePos := v.pos.MoveInDirection(10, fireRotation).Add((gmath.Vec{Y: 38}).Rotated(fireRotation))
 			v.world.scene.AddObject(newProjectileNode(projectileConfig{
 				target:    v.enemy,
 				world:     v.world,
 				weapon:    w.design,
 				pos:       firePos,
-				targetPos: firePos.MoveInDirection(w.design.AttackRange-20, v.rotation),
+				targetPos: firePos.MoveInDirection(w.design.AttackRange-20, fireRotation),
 				charge:    charge,
 			}))
 		} else {
-			firePos := v.pos.MoveInDirection(10, v.rotation).Add((gmath.Vec{Y: -38}).Rotated(v.rotation))
+			firePos := v.pos.MoveInDirection(10, fireRotation).Add((gmath.Vec{Y: -38}).Rotated(fireRotation))
 			v.world.scene.AddObject(newProjectileNode(projectileConfig{
 				target:    v.enemy,
 				world:     v.world,
 				weapon:    w.design,
 				pos:       firePos,
-				targetPos: firePos.MoveInDirection(w.design.AttackRange-20, v.rotation),
+				targetPos: firePos.MoveInDirection(w.design.AttackRange-20, fireRotation),
 				charge:    charge,
 			}))
 		}
@@ -142,65 +149,67 @@ func (w *weaponSystem) Attack(charge float32) {
 func (w *weaponSystem) AltAttack(charge float32) {
 	v := w.vessel
 
+	fireRotation := v.getFireRotation()
+
 	switch w.design {
 	case gamedata.IonCannonWeapon:
-		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation+0.15, w.design))
-		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation-0.15, w.design))
+		v.world.scene.AddObject(w.createSimpleProjectile(charge, fireRotation+0.15, w.design))
+		v.world.scene.AddObject(w.createSimpleProjectile(charge, fireRotation-0.15, w.design))
 
 	case gamedata.PulseLaserWeapon:
-		firePos1 := v.pos.MoveInDirection(30, v.rotation).Add((gmath.Vec{Y: 16}).Rotated(v.rotation))
-		firePos2 := v.pos.MoveInDirection(30, v.rotation).Add((gmath.Vec{Y: -16}).Rotated(v.rotation))
+		firePos1 := v.pos.MoveInDirection(30, fireRotation).Add((gmath.Vec{Y: 16}).Rotated(fireRotation))
+		firePos2 := v.pos.MoveInDirection(30, fireRotation).Add((gmath.Vec{Y: -16}).Rotated(fireRotation))
 		for _, firePos := range [2]gmath.Vec{firePos1, firePos2} {
 			v.world.scene.AddObject(newProjectileNode(projectileConfig{
 				target:    v.enemy,
 				world:     v.world,
 				weapon:    w.design,
 				pos:       firePos,
-				targetPos: v.pos.MoveInDirection(w.design.AttackRange, v.rotation),
+				targetPos: v.pos.MoveInDirection(w.design.AttackRange, fireRotation),
 				charge:    charge,
 			}))
 		}
 
 	case gamedata.RearCannonWeapon:
-		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation+0.3+math.Pi/2+0.25, w.design))
-		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation-0.3+math.Pi/2-0.25, w.design))
-		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation+0.3+math.Pi/2+0.5, w.design))
-		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation-0.3+math.Pi/2-0.5, w.design))
-		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation+0.3-math.Pi/2+0.25, w.design))
-		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation-0.3-math.Pi/2-0.25, w.design))
-		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation+0.3-math.Pi/2+0.5, w.design))
-		v.world.scene.AddObject(w.createSimpleProjectile(charge, v.rotation-0.3-math.Pi/2-0.5, w.design))
+		v.world.scene.AddObject(w.createSimpleProjectile(charge, fireRotation+0.3+math.Pi/2+0.25, w.design))
+		v.world.scene.AddObject(w.createSimpleProjectile(charge, fireRotation-0.3+math.Pi/2-0.25, w.design))
+		v.world.scene.AddObject(w.createSimpleProjectile(charge, fireRotation+0.3+math.Pi/2+0.5, w.design))
+		v.world.scene.AddObject(w.createSimpleProjectile(charge, fireRotation-0.3+math.Pi/2-0.5, w.design))
+		v.world.scene.AddObject(w.createSimpleProjectile(charge, fireRotation+0.3-math.Pi/2+0.25, w.design))
+		v.world.scene.AddObject(w.createSimpleProjectile(charge, fireRotation-0.3-math.Pi/2-0.25, w.design))
+		v.world.scene.AddObject(w.createSimpleProjectile(charge, fireRotation+0.3-math.Pi/2+0.5, w.design))
+		v.world.scene.AddObject(w.createSimpleProjectile(charge, fireRotation-0.3-math.Pi/2-0.5, w.design))
 
 	case gamedata.SpinCannonWeapon:
-		rotation := v.rotation + gmath.Rad(float64(w.altAttackCounter)*math.Pi-math.Pi/2)
+		rotation := fireRotation + gmath.Rad(float64(w.altAttackCounter)*math.Pi-math.Pi/2)
 		v.world.scene.AddObject(newProjectileNode(projectileConfig{
 			target:    v.enemy,
 			world:     v.world,
 			weapon:    w.design,
 			pos:       v.pos.MoveInDirection(60, rotation),
-			targetPos: v.pos.MoveInDirection(w.design.AttackRange, v.rotation),
+			targetPos: v.pos.MoveInDirection(w.design.AttackRange, fireRotation),
 			charge:    charge,
 		}))
 
 	case gamedata.TwinCannonWeapon:
 		if w.primaryCounter%24 > 11 {
-			firePos := v.pos.MoveInDirection(10, v.rotation).Add((gmath.Vec{Y: 46}).Rotated(v.rotation))
+			firePos := v.pos.MoveInDirection(10, fireRotation).Add((gmath.Vec{Y: 46}).Rotated(fireRotation))
 			v.world.scene.AddObject(newProjectileNode(projectileConfig{
 				target:    v.enemy,
 				world:     v.world,
 				weapon:    gamedata.TwinCannonSmallWeapon,
 				pos:       firePos,
-				targetPos: firePos.MoveInDirection(w.design.AttackRange-20, v.rotation),
+				targetPos: firePos.MoveInDirection(w.design.AttackRange-20, fireRotation),
 				charge:    charge,
 			}))
 		} else {
-			firePos := v.pos.MoveInDirection(10, v.rotation).Add((gmath.Vec{Y: -46}).Rotated(v.rotation))
+			firePos := v.pos.MoveInDirection(10, fireRotation).Add((gmath.Vec{Y: -46}).Rotated(fireRotation))
 			v.world.scene.AddObject(newProjectileNode(projectileConfig{
 				target:    v.enemy,
 				world:     v.world,
 				weapon:    gamedata.TwinCannonSmallWeapon,
 				pos:       firePos,
-				targetPos: firePos.MoveInDirection(w.design.AttackRange-20, v.rotation),
+				targetPos: firePos.MoveInDirection(w.design.AttackRange-20, fireRotation),
 				charge:    charge,
 			}))
 		}

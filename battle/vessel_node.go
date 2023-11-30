@@ -11,8 +11,9 @@ import (
 )
 
 type vesselNode struct {
-	rotation gmath.Rad
-	pos      gmath.Vec
+	rotation     gmath.Rad
+	spinRotation gmath.Rad
+	pos          gmath.Vec
 
 	enemy *vesselNode
 	bot   bool
@@ -25,6 +26,8 @@ type vesselNode struct {
 
 	hp     float64
 	energy float64
+
+	spinning float64
 
 	strafing      bool
 	thrusting     bool
@@ -91,25 +94,42 @@ func (v *vesselNode) Init(scene *ge.Scene) {
 	v.rotationInitialVelocity = float64(v.design.RotationMaxSpeed * 0.1)
 }
 
+func (v *vesselNode) getFireRotation() gmath.Rad {
+	if v.spinning > 0 {
+		return v.spinRotation
+	}
+	return v.rotation
+}
+
+func (v *vesselNode) startSpinning(t float64) {
+	v.spinning = t
+	v.spinRotation = v.rotation
+	v.sprite.Rotation = &v.spinRotation
+}
+
+func (v *vesselNode) stopSpinning() {
+	v.sprite.Rotation = &v.rotation
+}
+
 func (v *vesselNode) OnDamage(dmg gamedata.Damage) {
 	if v.disposed {
 		return
 	}
 
-	healthDamage := dmg.HP
-	if v.bot {
-		healthDamage *= v.world.botDamageMultiplier
-	} else {
-		healthDamage *= v.world.playerDamageMultiplier
+	if v.spinning == 0 {
+		healthDamage := dmg.HP
+		if v.bot {
+			healthDamage *= v.world.botDamageMultiplier
+		} else {
+			healthDamage *= v.world.playerDamageMultiplier
+		}
+		v.hp = gmath.ClampMin(v.hp-healthDamage, 0)
+		if v.hp == 0 {
+			v.destroy()
+			return
+		}
+		v.EventOnDamage.Emit(dmg)
 	}
-
-	v.hp = gmath.ClampMin(v.hp-healthDamage, 0)
-	if v.hp == 0 {
-		v.destroy()
-		return
-	}
-
-	v.EventOnDamage.Emit(dmg)
 }
 
 func (v *vesselNode) destroy() {
@@ -183,6 +203,18 @@ func (v *vesselNode) Update(delta float64) {
 	wasRotatingRight := v.rotatingRight
 	v.rotatingRight = false
 
+	wasSpinning := v.spinning > 0
+	v.spinning = gmath.ClampMin(v.spinning-delta, 0)
+	if wasSpinning && v.spinning == 0 {
+		v.stopSpinning()
+	}
+	if v.spinning > 0 {
+		orders.rotateLeft = false
+		orders.rotateRight = false
+		orders.turbo = false
+		v.spinRotation += (5 * v.design.RotationMaxSpeed) * gmath.Rad(delta)
+	}
+
 	switch {
 	case orders.rotateLeft == orders.rotateRight:
 		// Do nothing.
@@ -237,9 +269,7 @@ func (v *vesselNode) Update(delta float64) {
 		}
 		v.sprite.FrameOffset.X = 1 * v.sprite.FrameWidth
 	}
-
 	accel := v.acceleration()
-
 	if orders.turbo {
 		v.thrusting = true
 		if !wasThrusting {
@@ -255,7 +285,6 @@ func (v *vesselNode) Update(delta float64) {
 		}
 		v.velocity = v.velocity.Add(gmath.RadToVec(v.rotation).Mulf(accel * delta)).ClampLen(v.maxSpeed())
 	}
-
 	v.pos = v.pos.Add(v.velocity.Mulf(delta))
 
 	if orders.fire {
