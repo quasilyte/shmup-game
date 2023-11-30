@@ -25,7 +25,7 @@ type WeaponDesign struct {
 }
 
 var IonCannonWeapon = &WeaponDesign{
-	Damage:                Damage{HP: 12},
+	Damage:                Damage{HP: 13},
 	AttackRange:           280,
 	ProjectileSpeed:       700,
 	ExplosionRange:        12,
@@ -60,7 +60,7 @@ var RearCannonWeapon = &WeaponDesign{
 }
 
 var TwinCannonWeapon = &WeaponDesign{
-	Damage:                Damage{HP: 12},
+	Damage:                Damage{HP: 14},
 	AttackRange:           250,
 	ProjectileSpeed:       900,
 	ExplosionRange:        8,
@@ -72,7 +72,7 @@ var TwinCannonWeapon = &WeaponDesign{
 }
 
 var TwinCannonSmallWeapon = &WeaponDesign{
-	Damage:                Damage{HP: 5},
+	Damage:                Damage{HP: 6},
 	AttackRange:           250,
 	ProjectileSpeed:       900,
 	ExplosionRange:        4,
