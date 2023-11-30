@@ -9,7 +9,6 @@ import (
 	"github.com/quasilyte/shmup-game/assets"
 	"github.com/quasilyte/shmup-game/battle"
 	"github.com/quasilyte/shmup-game/eui"
-	"github.com/quasilyte/shmup-game/gamedata"
 	"github.com/quasilyte/shmup-game/session"
 )
 
@@ -66,7 +65,6 @@ func (c *ResultsController) Init(scene *ge.Scene) {
 	}
 
 	lines := [][2]string{
-		{"Music", gamedata.MusicList[c.state.Settings.SelectedMusic].Name},
 		{"Time played", formatDurationCompact(c.result.TimePlayed)},
 		{"Distance penalty", strconv.Itoa(int(c.result.PressurePenalty))},
 		{"Perfect dodges", strconv.Itoa(int(c.result.DodgePoints))},

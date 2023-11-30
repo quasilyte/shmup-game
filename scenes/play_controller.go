@@ -6,7 +6,6 @@ import (
 	"github.com/quasilyte/shmup-game/assets"
 	"github.com/quasilyte/shmup-game/controls"
 	"github.com/quasilyte/shmup-game/eui"
-	"github.com/quasilyte/shmup-game/gamedata"
 	"github.com/quasilyte/shmup-game/session"
 )
 
@@ -35,17 +34,17 @@ func (c *PlayController) Init(scene *ge.Scene) {
 
 	rowContainer.AddChild(eui.NewCenteredLabel("Play", assets.BitmapFont2))
 
-	rowContainer.AddChild(eui.NewSelectButton(eui.SelectButtonConfig{
-		Resources: c.state.UIResources,
-		Input:     c.state.Input,
-		Value:     &c.state.Settings.SelectedMusic,
-		Label:     "Music Track",
-		ValueNames: []string{
-			gamedata.Music1.Name,
-			gamedata.Music2.Name,
-			gamedata.Music3.Name,
-		},
-	}))
+	// rowContainer.AddChild(eui.NewSelectButton(eui.SelectButtonConfig{
+	// 	Resources: c.state.UIResources,
+	// 	Input:     c.state.Input,
+	// 	Value:     &c.state.Settings.SelectedMusic,
+	// 	Label:     "Music Track",
+	// 	ValueNames: []string{
+	// 		gamedata.Music1.Name,
+	// 		gamedata.Music2.Name,
+	// 		gamedata.Music3.Name,
+	// 	},
+	// }))
 
 	rowContainer.AddChild(eui.NewSelectButton(eui.SelectButtonConfig{
 		Resources: c.state.UIResources,
@@ -107,7 +106,7 @@ func (c *PlayController) Init(scene *ge.Scene) {
 	panel1rows.AddChild(eui.NewCenteredLabel("Select Level", assets.BitmapFont1))
 	panel1rows.AddChild(grid)
 
-	levelLabels := []string{"I", "II", "III"}
+	levelLabels := []string{"I", "II", "III", "IV", "V", "VI"}
 	for i := range levelLabels {
 		levelID := i
 		b := eui.NewButtonWithConfig(c.state.UIResources, eui.ButtonConfig{
@@ -115,8 +114,7 @@ func (c *PlayController) Init(scene *ge.Scene) {
 			Text:     levelLabels[i],
 			OnClick: func() {
 				c.scene.Context().SaveGameData("save", c.state.Settings)
-				_ = levelID
-				c.scene.Context().ChangeScene(NewBattleController(c.state))
+				c.scene.Context().ChangeScene(NewBattleController(c.state, levelID))
 			},
 		})
 		grid.AddChild(b)

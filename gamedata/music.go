@@ -28,8 +28,8 @@ type MusicInfo struct {
 }
 
 var MusicList = []*MusicInfo{
-	Music1,
 	Music2,
+	Music1,
 	Music3,
 }
 

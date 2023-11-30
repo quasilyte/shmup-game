@@ -12,18 +12,25 @@ import (
 )
 
 type BattleController struct {
-	state  *session.State
-	scene  *ge.Scene
-	runner *battle.Runner
+	state   *session.State
+	levelID int
+	scene   *ge.Scene
+	runner  *battle.Runner
 }
 
-func NewBattleController(state *session.State) *BattleController {
+func NewBattleController(state *session.State, levelID int) *BattleController {
 	return &BattleController{
-		state: state,
+		state:   state,
+		levelID: levelID,
 	}
 }
 
 func (c *BattleController) Init(scene *ge.Scene) {
+	levelMusic := []int{
+		0, 1, 2,
+		0, 1, 2,
+	}
+
 	c.state.EventPlayerUpdate.Reset()
 	scene.Audio().PauseCurrentMusic()
 
@@ -45,9 +52,10 @@ func (c *BattleController) Init(scene *ge.Scene) {
 	shader := scene.Context().Loader.LoadShader(assets.ShaderCRT).Data
 	stage.Shader = shader
 
-	music := gamedata.MusicList[c.state.Settings.SelectedMusic]
+	music := gamedata.MusicList[levelMusic[c.levelID]]
 
 	c.runner = battle.NewRunner(battle.RunnerConfig{
+		LevelID:        c.levelID,
 		Session:        c.state,
 		Stage:          stage,
 		Music:          music,

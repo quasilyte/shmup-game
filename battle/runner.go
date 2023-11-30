@@ -25,6 +25,7 @@ type Runner struct {
 	music      *gamedata.MusicInfo
 	t          float64
 	startTime  time.Time
+	levelID    int
 
 	transitionQueued bool
 
@@ -39,6 +40,7 @@ type Runner struct {
 }
 
 type RunnerConfig struct {
+	LevelID        int
 	SectorSize     gmath.Vec
 	SectorTextures []*ebiten.Image
 	Music          *gamedata.MusicInfo
@@ -48,6 +50,7 @@ type RunnerConfig struct {
 
 func NewRunner(config RunnerConfig) *Runner {
 	return &Runner{
+		levelID: config.LevelID,
 		session: config.Session,
 		state: &battleState{
 			difficulty: config.Session.Settings.Difficulty,
@@ -115,14 +118,22 @@ func (r *Runner) Init(scene *ge.Scene) {
 	r.state.human = human
 
 	{
-		vessel := newVesselNode(vesselConfig{
-			world:  r.state,
-			design: gamedata.BossVessel2,
-			// weapon:        gamedata.SpinCannonWeapon,
-			weapon: gamedata.PhotonCannonWeapon,
-			// specialWeapon: gamedata.HomingMissileSpecialWeapon,
-			specialWeapon: gamedata.MineSpecialWeapon,
-		})
+		var vessel *vesselNode
+		if r.levelID%2 == 0 {
+			vessel = newVesselNode(vesselConfig{
+				world:         r.state,
+				design:        gamedata.BossVessel1,
+				weapon:        gamedata.SpinCannonWeapon,
+				specialWeapon: gamedata.HomingMissileSpecialWeapon,
+			})
+		} else {
+			vessel = newVesselNode(vesselConfig{
+				world:         r.state,
+				design:        gamedata.BossVessel2,
+				weapon:        gamedata.PhotonCannonWeapon,
+				specialWeapon: gamedata.MineSpecialWeapon,
+			})
+		}
 		vessel.pos = gmath.Vec{X: -80, Y: -240}
 		vessel.rotation = math.Pi / 2
 		vessel.bot = true
@@ -165,8 +176,8 @@ func (r *Runner) Init(scene *ge.Scene) {
 
 	switch r.session.Settings.Difficulty {
 	case 0: // Easy
-		r.state.botDamageMultiplier = 1.2
-		r.state.playerDamageMultiplier = 0.7
+		r.state.botDamageMultiplier = 1.25
+		r.state.playerDamageMultiplier = 0.65
 	case 1: // Normal
 		r.state.botDamageMultiplier = 1.0
 		r.state.playerDamageMultiplier = 1.0
