@@ -35,6 +35,7 @@ func registerImageResources(ctx *ge.Context) {
 		ImageExplosionSmoke:           {Path: "image/effect/explosion_smoke.png", FrameWidth: 32},
 		ImageFireExplosion:            {Path: "image/effect/fire_explosion.png", FrameWidth: 32},
 		ImageMegaBombImpact:           {Path: "image/effect/mega_bomb_impact.png", FrameWidth: 32},
+		ImageTrailEffect:              {Path: "image/effect/trail.png", FrameWidth: 10},
 
 		ImageDashEffect: {Path: "image/effect/dash.png", FrameWidth: 30},
 
@@ -92,6 +93,7 @@ const (
 	ImageExplosionSmoke
 	ImageFireExplosion
 	ImageMegaBombImpact
+	ImageTrailEffect
 
 	ImageDashEffect
 

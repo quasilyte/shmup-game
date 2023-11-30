@@ -40,6 +40,9 @@ type vesselNode struct {
 	rotationAcceleration    float64
 	rotationVelocity        float64
 
+	ghostDelay float64
+	trailDelay float64
+
 	sprite *ge.Sprite
 
 	orders vesselOrders
@@ -188,6 +191,9 @@ func (v *vesselNode) currentSpeed() float64 {
 }
 
 func (v *vesselNode) Update(delta float64) {
+	v.ghostDelay = gmath.ClampMin(v.ghostDelay-delta, 0)
+	v.trailDelay = gmath.ClampMin(v.trailDelay-delta, 0)
+
 	orders := v.orders
 	v.orders = vesselOrders{}
 
@@ -286,6 +292,21 @@ func (v *vesselNode) Update(delta float64) {
 		v.velocity = v.velocity.Add(gmath.RadToVec(v.rotation).Mulf(accel * delta)).ClampLen(v.maxSpeed())
 	}
 	v.pos = v.pos.Add(v.velocity.Mulf(delta))
+
+	if v.ghostDelay == 0 && v.velocity.Len() > 80 {
+		v.ghostDelay = v.scene.Rand().FloatRange(0.1, 0.15)
+		v.scene.AddObject(newVesselGhostNode(v.world, v.design.Image, v.pos, v.getFireRotation()))
+	}
+	if v.trailDelay == 0 && v.velocity.Len() > 20 {
+		const maxSpeed = 400.0
+		speedRating := gmath.ClampMin((v.velocity.Len()/maxSpeed)+v.scene.Rand().FloatRange(-0.1, 0.3), 0.01)
+		delayMultiplier := gmath.ClampMin(1.15-speedRating, 0.02)
+		v.trailDelay = v.scene.Rand().FloatRange(0.04, 0.09) * delayMultiplier
+		frame := gmath.Clamp(int(math.Round(speedRating*5)), 0, 5)
+		pos := v.pos.MoveInDirection(10, v.rotation+math.Pi).Add(v.scene.Rand().Offset(-4, 4)).
+			Add((gmath.Vec{Y: v.scene.Rand().FloatRange(-8, 8)}).Rotated(v.rotation + math.Pi))
+		v.scene.AddObject(newVesselTrailNode(v.world, frame, pos, v.velocity.Angle()))
+	}
 
 	if orders.fire {
 		v.maybeFire(orders.fireCharge)
