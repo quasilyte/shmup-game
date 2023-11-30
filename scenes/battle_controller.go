@@ -6,6 +6,7 @@ import (
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/shmup-game/assets"
 	"github.com/quasilyte/shmup-game/battle"
+	"github.com/quasilyte/shmup-game/controls"
 	"github.com/quasilyte/shmup-game/gamedata"
 	"github.com/quasilyte/shmup-game/session"
 	"github.com/quasilyte/shmup-game/viewport"
@@ -78,5 +79,9 @@ func (c *BattleController) leaveScene(next ge.SceneController) {
 }
 
 func (c *BattleController) Update(delta float64) {
+	if c.state.Input.ActionIsJustReleased(controls.ActionMenuBack) {
+		c.leaveScene(NewPlayController(c.state))
+		return
+	}
 	c.runner.Update(delta)
 }

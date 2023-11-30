@@ -122,6 +122,10 @@ func (c *ResultsController) calcScore() int {
 
 	// Every remaining 1% of health gives ~1.5 score point.
 	score += float64(c.result.Health * 150)
+	if c.result.Health >= 0.99 {
+		// Unscratched bonus.
+		score += 50
+	}
 
 	// easy: 80%
 	// normal: 100%
@@ -143,7 +147,7 @@ func (c *ResultsController) calcScore() int {
 	timeSec := c.result.TimePlayed.Seconds()
 	timeMultiplier := gmath.ClampMin(1.0-(timeSec*(1/badTimeSec)), 0.0001)
 
-	score += 7.5 * float64(c.result.DodgePoints)
+	score += 8 * float64(c.result.DodgePoints)
 	score -= float64(2 * int(c.result.PressurePenalty))
 
 	return gmath.ClampMin(int(score*timeMultiplier*difficultyMultiplier), 1)

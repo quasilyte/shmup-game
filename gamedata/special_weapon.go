@@ -27,6 +27,7 @@ var MegaBombSpecialWeapon = &SpecialWeaponDesign{
 		ExplosionRange:      30,
 		ProjectileImage:     assets.ImageMegaBomb,
 		ProjectileExplosion: assets.ImageMegaBombImpact,
+		ImpactSound:         assets.AudioMegaBombImpact,
 		IgnoreChargeColor:   true,
 	},
 }

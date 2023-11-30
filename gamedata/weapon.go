@@ -32,7 +32,7 @@ var IonCannonWeapon = &WeaponDesign{
 	ProjectileImage:       assets.ImageLaserProjectile1,
 	ProjectileExplosion:   assets.ImageLaserExplosion1,
 	ProjectileSpawnEffect: assets.ImageLaserExplosion1,
-	ImpactSound:           assets.AudioLaser1Impact,
+	ImpactSound:           assets.AudioFragImpact,
 }
 
 var PulseLaserWeapon = &WeaponDesign{
@@ -43,7 +43,7 @@ var PulseLaserWeapon = &WeaponDesign{
 	ProjectileImage:       assets.ImageLaserProjectile2,
 	ProjectileExplosion:   assets.ImageLaserExplosion2,
 	ProjectileSpawnEffect: assets.ImageLaserExplosion2,
-	ImpactSound:           assets.AudioLaser1Impact,
+	ImpactSound:           assets.AudioFragImpact,
 	CollisionRange:        2,
 }
 
@@ -55,7 +55,7 @@ var RearCannonWeapon = &WeaponDesign{
 	ProjectileImage:       assets.ImageRearCannonProjectile,
 	ProjectileExplosion:   assets.ImageRearCannonExplosion,
 	ProjectileSpawnEffect: assets.ImageRearCannonExplosion,
-	ImpactSound:           assets.AudioLaser1Impact,
+	ImpactSound:           assets.AudioFragImpact,
 	CollisionRange:        2,
 }
 
@@ -67,7 +67,7 @@ var TwinCannonWeapon = &WeaponDesign{
 	ProjectileImage:       assets.ImageTwinCannonProjectile,
 	ProjectileExplosion:   assets.ImageTwinCannonExplosion,
 	ProjectileSpawnEffect: assets.ImageTwinCannonExplosion,
-	ImpactSound:           assets.AudioLaser1Impact,
+	ImpactSound:           assets.AudioFragImpact,
 	CollisionRange:        4,
 }
 
@@ -79,7 +79,7 @@ var TwinCannonSmallWeapon = &WeaponDesign{
 	ProjectileImage:       assets.ImageTwinCannonSmallProjectile,
 	ProjectileExplosion:   assets.ImageTwinCannonSmallExplosion,
 	ProjectileSpawnEffect: assets.ImageTwinCannonSmallExplosion,
-	ImpactSound:           assets.AudioLaser1Impact,
+	ImpactSound:           assets.AudioFragImpact,
 	CollisionRange:        2,
 }
 

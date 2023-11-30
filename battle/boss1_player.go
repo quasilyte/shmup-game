@@ -38,6 +38,10 @@ type boss1player struct {
 	strafeRightTime float64
 	canStrafe       bool
 
+	aggroNum        int
+	directHits      int
+	followCancelled bool
+
 	waypoint gmath.Vec
 }
 
@@ -52,14 +56,22 @@ func (p *boss1player) Init(scene *ge.Scene) {
 	p.scene = scene
 
 	p.vessel.EventOnDamage.Connect(p, func(dmg gamedata.Damage) {
-		if p.scene.Rand().Chance(0.02) {
+		if p.bstate == bstateFollow {
+			p.directHits++
+			if p.directHits >= 5 && p.scene.Rand().Chance(0.7) {
+				p.setState(bstateNone)
+				p.followCancelled = true
+				return
+			}
+		}
+
+		if p.bstate == bstateIdle && p.scene.Rand().Chance(0.4) {
 			p.setState(bstateNone)
 			return
 		}
 
-		if p.scene.Rand().Chance(0.09) {
-			p.setState(bstateFollow)
-			p.canStrafe = p.scene.Rand().Chance(0.6)
+		if p.scene.Rand().Chance(0.02) {
+			p.setState(bstateNone)
 			return
 		}
 	})
@@ -126,9 +138,13 @@ func (p *boss1player) updateNoneState(delta float64) {
 
 	default: // 30%
 		// Follow the player.
-		p.stateTicker = p.scene.Rand().FloatRange(1, 10.5)
+		maxDuration := 8.0
+		if p.followCancelled {
+			maxDuration = 5.5
+		}
+		p.stateTicker = p.scene.Rand().FloatRange(1, maxDuration)
 		p.setState(bstateFollow)
-		p.canStrafe = p.scene.Rand().Chance(0.3)
+		p.canStrafe = p.followCancelled || p.scene.Rand().Chance(0.3)
 	}
 }
 
@@ -144,8 +160,10 @@ func (p *boss1player) posAroundPlayer(r float64) gmath.Vec {
 func (p *boss1player) setState(bstate botState) {
 	p.rotationDelta = rotationDeltaUnset
 	p.strafeDelay = 0
+	p.directHits = 0
 	p.canStrafe = false
 	p.bstate = bstate
+	p.followCancelled = false
 }
 
 func (p *boss1player) updateIdleState(delta float64) {

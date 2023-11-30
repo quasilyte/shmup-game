@@ -47,7 +47,7 @@ func (c *settingsController) initUI(scene *ge.Scene) {
 		OnPressed: func() {
 			if c.state.Settings.SoundLevel != 0 {
 				scene.Audio().SetGroupVolume(assets.SoundGroupEffect, assets.VolumeMultiplier(c.state.Settings.SoundLevel))
-				scene.Audio().PlaySound(assets.AudioLaser1Impact)
+				scene.Audio().PlaySound(assets.AudioFragImpact)
 			}
 		},
 	}))

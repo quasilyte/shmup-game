@@ -40,7 +40,8 @@ func registerAudioResources(ctx *ge.Context, config Config) {
 		AudioMusic3:    {Path: "music/drozerix-playful_girl.xm", Group: SoundGroupMusic},
 		AudioMusicMenu: {Path: "music/drozerix-crush.xm", Group: SoundGroupMusic},
 
-		AudioLaser1Impact: {Path: "sfx/laser1_impact.wav"},
+		AudioFragImpact:     {Path: "sfx/frag_impact.wav"},
+		AudioMegaBombImpact: {Path: "sfx/megabomb_impact.wav"},
 	}
 
 	xmParser := xmfile.NewParser(xmfile.ParserConfig{})
@@ -82,7 +83,8 @@ func NumSamples(a resource.AudioID) int {
 const (
 	AudioNone resource.AudioID = iota
 
-	AudioLaser1Impact
+	AudioFragImpact
+	AudioMegaBombImpact
 
 	AudioMusic1
 	AudioMusic2
