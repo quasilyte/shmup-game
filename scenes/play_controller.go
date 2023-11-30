@@ -88,6 +88,7 @@ func (c *PlayController) Init(scene *ge.Scene) {
 		Value:     &c.state.Settings.Difficulty,
 		Label:     "Difficulty",
 		ValueNames: []string{
+			"Casual",
 			"Easy",
 			"Normal",
 			"Hard",

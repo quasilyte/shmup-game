@@ -25,4 +25,5 @@ type Settings struct {
 	SoundLevel      int
 	MusicLevel      int
 	LevelsAvailable int
+	Hints           int
 }

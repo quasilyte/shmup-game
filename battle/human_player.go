@@ -25,6 +25,7 @@ type humanPlayer struct {
 	distLabelPos    gmath.Vec
 	distLabel       *ge.Label
 	energyRegen     float64
+	hints           bool
 }
 
 func (p *humanPlayer) Init(scene *ge.Scene) {
@@ -61,6 +62,46 @@ func (p *humanPlayer) Init(scene *ge.Scene) {
 	}
 
 	p.energyRegen = p.vessel.design.Energy * 0.05
+
+	if p.hints {
+		strafeHint := ge.NewRect(scene.Context(), 196, 40)
+		strafeHint.Centered = false
+		strafeHint.Pos.Offset = gmath.Vec{X: 32, Y: 32}
+		strafeHint.OutlineWidth = 2
+		strafeHint.OutlineColorScale.SetRGBA(0, 0, 0, 0xff)
+		strafeHint.FillColorScale.SetRGBA(0x01, 0x02, 0x09, 0xff)
+		p.camera.UI.AddGraphicsAbove(strafeHint)
+
+		strafeHintLabel := ge.NewLabel(assets.BitmapFont1)
+		strafeHintLabel.Width = strafeHint.Width
+		strafeHintLabel.Height = strafeHint.Height
+		strafeHintLabel.AlignHorizontal = ge.AlignHorizontalCenter
+		strafeHintLabel.AlignVertical = ge.AlignVerticalCenter
+		strafeHintLabel.SetColorScaleRGBA(0x4c, 0xac, 0x3e, 0xff)
+		strafeHintLabel.Text = "Hold SHIFT to strafe"
+		strafeHintLabel.Pos.Offset = strafeHint.Pos.Offset
+		p.camera.UI.AddGraphicsAbove(strafeHintLabel)
+	}
+
+	if p.hints {
+		specialHint := ge.NewRect(scene.Context(), 196, 40)
+		specialHint.Centered = false
+		specialHint.Pos.Offset = gmath.Vec{X: scene.Context().ScreenWidth - 32 - 196, Y: 32}
+		specialHint.OutlineWidth = 2
+		specialHint.OutlineColorScale.SetRGBA(0, 0, 0, 0xff)
+		specialHint.FillColorScale.SetRGBA(0x01, 0x02, 0x09, 0xff)
+		p.camera.UI.AddGraphicsAbove(specialHint)
+
+		specialHintLabel := ge.NewLabel(assets.BitmapFont1)
+		specialHintLabel.Width = specialHint.Width
+		specialHintLabel.Height = specialHint.Height
+		specialHintLabel.AlignHorizontal = ge.AlignHorizontalCenter
+		specialHintLabel.AlignVertical = ge.AlignVerticalCenter
+		specialHintLabel.SetColorScaleRGBA(0x4c, 0xac, 0x3e, 0xff)
+		specialHintLabel.Text = "Press SPACE to activate\nSpecial"
+		specialHintLabel.Pos.Offset = specialHint.Pos.Offset
+		p.camera.UI.AddGraphicsAbove(specialHintLabel)
+	}
 }
 
 func (p *humanPlayer) IsDisposed() bool {
@@ -74,7 +115,7 @@ func (p *humanPlayer) Update(delta float64) {
 	p.vessel.orders.strafe = p.input.ActionIsPressed(controls.ActionStrafe)
 	p.vessel.orders.specialFire = p.input.ActionIsJustPressed(controls.ActionSpecial)
 
-	if p.world.difficulty == 0 {
+	if p.world.difficulty <= 1 {
 		p.vessel.hp = gmath.ClampMax(p.vessel.hp+delta, p.vessel.design.HP)
 	}
 
@@ -111,11 +152,11 @@ func (p *humanPlayer) updateCamera(delta float64) {
 				p.world.result.PressurePenalty += 0.1
 			}
 			switch p.world.difficulty {
-			case 2: // hard (take damage in red zone)
+			case 3: // hard (take damage in red zone)
 				if displayDist > 200 {
 					p.vessel.OnDamage(gamedata.Damage{HP: 0.1})
 				}
-			case 3: // nightmare (take damage in yellow zone)
+			case 4: // nightmare (take damage in yellow zone)
 				if displayDist > 100 {
 					p.vessel.OnDamage(gamedata.Damage{HP: 0.15})
 				}

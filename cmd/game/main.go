@@ -64,7 +64,8 @@ func getDefaultSettings() session.Settings {
 	return session.Settings{
 		SoundLevel:      3,
 		MusicLevel:      3,
-		Difficulty:      0, // For game jams, easy is a good default
+		Difficulty:      1, // For game jams, easy is a good default
 		LevelsAvailable: 1,
+		Hints:           1,
 	}
 }

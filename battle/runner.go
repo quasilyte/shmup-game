@@ -113,6 +113,7 @@ func (r *Runner) Init(scene *ge.Scene) {
 		input:  r.session.Input,
 		camera: cam,
 		vessel: vessel,
+		hints:  r.session.Settings.Hints > 0,
 	}
 	scene.AddObject(human)
 	r.state.human = human
@@ -175,16 +176,19 @@ func (r *Runner) Init(scene *ge.Scene) {
 	r.updateSectors()
 
 	switch r.session.Settings.Difficulty {
-	case 0: // Easy
+	case 0: // Casual
+		r.state.botDamageMultiplier = 1.5
+		r.state.playerDamageMultiplier = 0.3
+	case 1: // Easy
 		r.state.botDamageMultiplier = 1.25
 		r.state.playerDamageMultiplier = 0.65
-	case 1: // Normal
+	case 2: // Normal
 		r.state.botDamageMultiplier = 1.0
 		r.state.playerDamageMultiplier = 1.0
-	case 2: // Hard
+	case 3: // Hard
 		r.state.botDamageMultiplier = 0.85
 		r.state.playerDamageMultiplier = 1.2
-	case 3: // Nightmare
+	case 4: // Nightmare
 		r.state.botDamageMultiplier = 0.6
 		r.state.playerDamageMultiplier = 1.25
 	}

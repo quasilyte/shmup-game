@@ -55,10 +55,12 @@ func (c *ResultsController) Init(scene *ge.Scene) {
 	var difficulty string
 	switch c.result.Difficulty {
 	case 0:
-		difficulty = "easy"
+		difficulty = "casual"
 	case 1:
-		difficulty = "normal"
+		difficulty = "easy"
 	case 2:
+		difficulty = "normal"
+	case 3:
 		difficulty = "hard"
 	default:
 		difficulty = "nightmare"
@@ -127,21 +129,28 @@ func (c *ResultsController) calcScore() int {
 		score += 50
 	}
 
+	// casual: 40%
 	// easy: 80%
 	// normal: 100%
 	// hard: 120%
 	// nightmare: 140%
-	difficultyMultiplier := 0.8 + (0.2 * float64(c.result.Difficulty))
+	difficultyMultiplier := 0.6 + (0.2 * float64(c.result.Difficulty))
+	if c.result.Difficulty == 0 {
+		// Turn 60% into 40%.
+		difficultyMultiplier -= 0.2
+	}
 
 	var badTimeSec float64
 	switch c.result.Difficulty {
 	case 0:
-		badTimeSec = 4.25 * 60.0
+		badTimeSec = 4.0 * 60.0
 	case 1:
-		badTimeSec = 4.5 * 60.0
+		badTimeSec = 4.25 * 60.0
 	case 2:
-		badTimeSec = 5.0 * 60.0
+		badTimeSec = 4.5 * 60.0
 	case 3:
+		badTimeSec = 5.0 * 60.0
+	case 4:
 		badTimeSec = 6.0 * 60.0
 	}
 	timeSec := c.result.TimePlayed.Seconds()
