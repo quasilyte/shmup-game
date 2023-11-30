@@ -146,10 +146,10 @@ func (p *humanPlayer) updateCamera(delta float64) {
 				p.distLabel.SetColorScaleRGBA(255, 255, 255, 255)
 			} else if displayDist <= 200 {
 				p.distLabel.SetColorScaleRGBA(255, 255, 100, 255)
-				p.world.result.PressurePenalty += 0.01
+				p.world.result.PressurePenalty += 0.05
 			} else {
 				p.distLabel.SetColorScaleRGBA(255, 100, 100, 255)
-				p.world.result.PressurePenalty += 0.1
+				p.world.result.PressurePenalty += 0.3
 			}
 			switch p.world.difficulty {
 			case 3: // hard (take damage in red zone)
