@@ -136,6 +136,12 @@ func (r *Runner) Init(scene *ge.Scene) {
 			})
 		}
 		vessel.pos = gmath.Vec{X: -80, Y: -240}
+		if scene.Rand().Bool() {
+			vessel.pos.X = 80
+		}
+		if scene.Rand().Bool() {
+			vessel.pos.Y = -280
+		}
 		vessel.rotation = math.Pi / 2
 		vessel.bot = true
 		vessel.EventDestroyed.Connect(nil, func(gsignal.Void) {
