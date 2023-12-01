@@ -130,7 +130,8 @@ func (p *projectileNode) Detonate(collided bool) {
 	}
 
 	if collided || (p.toPos.DistanceTo(p.target.pos) < p.weapon.ExplosionRange+p.target.design.Size) {
-		p.target.OnDamage(p.weapon.Damage)
+		actualDamage := p.weapon.Damage.HP * chargeToDamageMultiplier(p.charge)
+		p.target.OnDamage(gamedata.Damage{HP: actualDamage})
 		if !p.dodge && p.target == p.world.human.vessel {
 			// This was calculated as a dodge, but in reality it wasn't.
 			p.world.result.DodgePoints--
