@@ -17,7 +17,7 @@ func multiplyColorScale(cs ge.ColorScale, v float32) ge.ColorScale {
 func chargeToDamageMultiplier(charge float32) float64 {
 	switch {
 	case charge >= 0.95:
-		return 1.25
+		return 1.1
 	case charge >= 0.7:
 		return 1.0
 	case charge >= 0.2:
