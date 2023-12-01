@@ -38,7 +38,6 @@ type boss1player struct {
 	strafeRightTime float64
 	canStrafe       bool
 
-	aggroNum        int
 	directHits      int
 	followCancelled bool
 
@@ -58,7 +57,7 @@ func (p *boss1player) Init(scene *ge.Scene) {
 	p.vessel.EventOnDamage.Connect(p, func(dmg gamedata.Damage) {
 		if p.bstate == bstateFollow {
 			p.directHits++
-			if p.directHits >= 5 && p.scene.Rand().Chance(0.7) {
+			if p.directHits >= 4 && p.scene.Rand().Chance(0.85) {
 				p.setState(bstateNone)
 				p.followCancelled = true
 				return
@@ -125,22 +124,22 @@ func (p *boss1player) updateNoneState(delta float64) {
 		p.waypoint = p.posAroundPlayer(256)
 		p.setState(bstateRotateToWaypoint)
 
-	case roll <= 0.5: // 15%
+	case roll <= 0.55: // 20%
 		// Actively rotate and strafe.
 		p.stateTicker = p.scene.Rand().FloatRange(3, 10)
 		p.setState(bstateDefense)
-		p.canStrafe = p.scene.Rand().Chance(0.7)
+		p.canStrafe = p.scene.Rand().Chance(0.85)
 
-	case roll <= 0.6 && hpPercent >= 0.6: // 10%
+	case roll <= 0.65 && hpPercent >= 0.6: // 10%
 		// Fly to the last known pos of the player.
 		p.waypoint = p.vessel.enemy.pos.Add(p.scene.Rand().Offset(-40, 40))
 		p.setState(bstateRotateToWaypoint)
 
-	default: // 30%
+	default: // 25%
 		// Follow the player.
-		maxDuration := 8.0
+		maxDuration := 7.0
 		if p.followCancelled {
-			maxDuration = 5.5
+			maxDuration = 2.5
 		}
 		p.stateTicker = p.scene.Rand().FloatRange(1, maxDuration)
 		p.setState(bstateFollow)
