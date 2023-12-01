@@ -25,7 +25,7 @@ type WeaponDesign struct {
 }
 
 var IonCannonWeapon = &WeaponDesign{
-	Damage:                Damage{HP: 13},
+	Damage:                Damage{HP: 12},
 	AttackRange:           280,
 	ProjectileSpeed:       700,
 	ExplosionRange:        12,

@@ -11,7 +11,7 @@ type SpecialWeaponDesign struct {
 }
 
 var DashSpecialWeapon = &SpecialWeaponDesign{
-	EnergyCost: 25,
+	EnergyCost: 35,
 }
 
 var SpinningShieldSpecialWeapon = &SpecialWeaponDesign{
@@ -19,7 +19,7 @@ var SpinningShieldSpecialWeapon = &SpecialWeaponDesign{
 }
 
 var MegaBombSpecialWeapon = &SpecialWeaponDesign{
-	EnergyCost: 25,
+	EnergyCost: 20,
 	Base: &WeaponDesign{
 		Damage:              Damage{HP: 20},
 		AttackRange:         340,
