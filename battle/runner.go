@@ -192,10 +192,10 @@ func (r *Runner) Init(scene *ge.Scene) {
 		r.state.botDamageMultiplier = 1.0
 		r.state.playerDamageMultiplier = 1.0
 	case 3: // Hard
-		r.state.botDamageMultiplier = 0.85
-		r.state.playerDamageMultiplier = 1.2
+		r.state.botDamageMultiplier = 0.75
+		r.state.playerDamageMultiplier = 1.15
 	case 4: // Nightmare
-		r.state.botDamageMultiplier = 0.6
+		r.state.botDamageMultiplier = 0.5
 		r.state.playerDamageMultiplier = 1.25
 	}
 }
