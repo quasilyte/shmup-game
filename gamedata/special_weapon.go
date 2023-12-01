@@ -11,7 +11,7 @@ type SpecialWeaponDesign struct {
 }
 
 var DashSpecialWeapon = &SpecialWeaponDesign{
-	EnergyCost: 15,
+	EnergyCost: 25,
 }
 
 var SpinningShieldSpecialWeapon = &SpecialWeaponDesign{
